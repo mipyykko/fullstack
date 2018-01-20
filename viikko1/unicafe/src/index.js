@@ -26,7 +26,7 @@ const Statistics = (props) => {
             </div>
         )
     }
-    
+
     return (
         <div>
             <h1>statistiikka</h1>
@@ -51,22 +51,9 @@ class App extends React.Component {
         })
     }
 
-
-    lisaaHyva = () => {
+    lisaa = (value) => {
         return () => {
-            this.setState({ hyva: this.state.hyva + 1 })
-        }
-    }
-
-    lisaaNeutraali = () => {
-        return () => {
-            this.setState({ neutraali: this.state.neutraali + 1 })
-        }
-    }
-
-    lisaaHuono = () => {
-        return () => {
-            this.setState({ huono: this.state.huono + 1 })
+            this.setState({ [value]: this.state[value] + 1})
         }
     }
 
@@ -76,9 +63,9 @@ class App extends React.Component {
             <div>
                 <h1>anna palautetta</h1>
                 <div>
-                    <Button handleClick={this.lisaaHyva()} title="hyvä" />
-                    <Button handleClick={this.lisaaNeutraali()} title="neutraali" />
-                    <Button handleClick={this.lisaaHuono()} title="huono" />
+                    <Button handleClick={this.lisaa('hyva')} title="hyvä" />
+                    <Button handleClick={this.lisaa('neutraali')} title="neutraali" />
+                    <Button handleClick={this.lisaa('huono')} title="huono" />
                 </div>
                 <Statistics state={this.state} />
             </div>
