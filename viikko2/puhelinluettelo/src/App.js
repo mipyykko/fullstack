@@ -17,7 +17,13 @@ class App extends React.Component {
 
   addNumber = (event) => {
     event.preventDefault()
-    this.setState({ persons: [...this.state.persons, { name: this.state.newName }], newName: ''})
+    var exists = Object.keys(this.state.persons)
+        .some(key => this.state.persons[key].name === this.state.newName)
+    if (exists) {
+        this.setState({ newName: '' })
+    } else {
+        this.setState({ persons: [...this.state.persons, { name: this.state.newName }], newName: ''})
+    }
   }
 
   render() {
