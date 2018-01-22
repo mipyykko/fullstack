@@ -1,25 +1,5 @@
 import React from 'react';
-
-const Person = ({ person }) => {
-    return (
-        <tr>
-            <td>{person.name}</td>
-            <td>{person.number}</td>
-        </tr>
-    )
-}
-
-const Persons = ({ persons }) => {
-    return (
-        <div>
-            <table>
-                <tbody>
-                {persons.map(person => <Person key={person.name} person={person} />)}
-                </tbody>
-            </table>
-        </div>
-    )
-} 
+import { Persons } from './components/Persons'
 
 class App extends React.Component {
   constructor(props) {
@@ -32,7 +12,8 @@ class App extends React.Component {
         { name: 'Lea Kutvonen', number: '040-123411256' }
       ],
       newName: '',
-      newNumber: ''
+      newNumber: '',
+      filter: ''
     }
   }
 
@@ -42,6 +23,10 @@ class App extends React.Component {
 
   handleNumberChange = (event) => {
       this.setState({ newNumber: event.target.value })
+  }
+  
+  handleFilterChange = (event) => {
+      this.setState({ filter: event.target.value })
   }
 
   addNumber = (event) => {
@@ -62,10 +47,40 @@ class App extends React.Component {
     }
   }
 
+  AddForm = () => {
+      return (
+        <div>
+          <h3>Lisää uusi</h3>
+          <form onSubmit={this.addNumber}>
+            <div>
+              nimi: <input 
+                  value={this.state.newName} 
+                  onChange={this.handleNameChange} />
+            </div>
+            <div>
+              numero: <input
+                  value={this.state.newNumber}
+                  onChange={this.handleNumberChange} />
+            </div>
+            <div>
+              <button type="submit">lisää</button>
+            </div>
+          </form>
+        </div>
+      )
+  }
+  
   render() {
     return (
       <div>
         <h2>Puhelinluettelo</h2>
+        <div>
+            rajaa näytettäviä: <input
+                value={this.state.filter}
+                onChange={this.handleFilterChange} />
+        </div>
+        <AddForm />
+        <h3>Lisää uusi</h3>
         <form onSubmit={this.addNumber}>
           <div>
             nimi: <input 
@@ -82,7 +97,7 @@ class App extends React.Component {
           </div>
         </form>
         <h2>Numerot</h2>
-        <Persons persons={this.state.persons} />
+        <Persons persons={this.state.persons} filter={this.state.filter} />
       </div>
     )
   }
