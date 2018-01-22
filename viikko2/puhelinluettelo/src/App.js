@@ -1,20 +1,23 @@
-import React from 'react';
+import React from 'react'
+import axios from 'axios'
 import { Persons } from './components/Persons'
 
 class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      persons: [
-        { name: 'Arto Hellas', number: '040-123456' },
-        { name: 'Martti Tienari', number: '040-19311456' },
-        { name: 'Arto Järvinen', number: '040-123554456' },
-        { name: 'Lea Kutvonen', number: '040-123411256' }
-      ],
-      newName: '',
-      newNumber: '',
-      filter: ''
+        persons: [],
+        newName: '',
+        newNumber: '',
+        filter: ''
     }
+  }
+
+  componentWillMount() {
+    axios.get('http://localhost:3001/persons')
+        .then(response => {
+            this.setState({ persons: response.data })
+        })
   }
 
   handleNameChange = (event) => {
@@ -56,7 +59,6 @@ class App extends React.Component {
                 value={this.state.filter}
                 onChange={this.handleFilterChange} />
         </div>
-        <AddForm />
         <h3>Lisää uusi</h3>
         <form onSubmit={this.addNumber}>
           <div>
