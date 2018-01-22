@@ -22,21 +22,28 @@ class App extends React.Component {
     this.setState({ ...this.state, votes: newVotes })
   }
 
-  render() {
+  quote = (index) => {
     return (
         <div>
             <div>
-                <button onClick={this.randomQuote()}>Random quote</button>
-            </div> 
-            <div>
-                {this.props.anecdotes[this.state.selected]}
+                {this.props.anecdotes[index]}
             </div>
             <div>
-                Has {this.state.votes[this.state.selected]} votes
+                Has {this.state.votes[index]} vote{this.state.votes[index] === 1 ? '' : 's'}
             </div>
-            <div>
-                <button onClick={this.vote()}>Vote for this</button>
-            </div>
+        </div>
+    )
+  }
+
+  render() {
+    const mostVotes = () => this.state.votes.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0)
+    return (
+        <div>
+            <button onClick={this.randomQuote()}>Random quote</button>
+            {this.quote(this.state.selected)}
+            <button onClick={this.vote()}>Vote for this</button>
+            <h2>anecdote with most votes:</h2>
+            {this.quote(mostVotes())}
         </div>
     )
   }
