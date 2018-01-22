@@ -47,29 +47,6 @@ class App extends React.Component {
     }
   }
 
-  AddForm = () => {
-      return (
-        <div>
-          <h3>Lisää uusi</h3>
-          <form onSubmit={this.addNumber}>
-            <div>
-              nimi: <input 
-                  value={this.state.newName} 
-                  onChange={this.handleNameChange} />
-            </div>
-            <div>
-              numero: <input
-                  value={this.state.newNumber}
-                  onChange={this.handleNumberChange} />
-            </div>
-            <div>
-              <button type="submit">lisää</button>
-            </div>
-          </form>
-        </div>
-      )
-  }
-  
   render() {
     return (
       <div>
