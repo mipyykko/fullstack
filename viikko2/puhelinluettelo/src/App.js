@@ -1,6 +1,6 @@
 import React from 'react'
 import numberService from './services/numbers'
-import { Persons } from './components/persons'
+import { PersonList } from './components/personList'
 
 class App extends React.Component {
   constructor(props) {
@@ -55,6 +55,21 @@ class App extends React.Component {
     }
   }
 
+  removePerson = (person) => {
+    if (window.confirm('poistetaanko ' + person.name)) {
+        numberService
+            .remove(person)
+            .then(response => {
+                var newPersons = this.state.persons
+                var index = newPersons.indexOf(person)
+                newPersons.splice(index, 1)
+                this.setState({
+                    persons: newPersons
+                })
+            })
+    }
+  }
+
   render() {
     return (
       <div>
@@ -81,7 +96,10 @@ class App extends React.Component {
           </div>
         </form>
         <h2>Numerot</h2>
-        <Persons persons={this.state.persons} filter={this.state.filter} />
+        <PersonList
+            persons={this.state.persons} 
+            filter={this.state.filter}
+            removePerson={this.removePerson} />
       </div>
     )
   }
