@@ -39,6 +39,12 @@ class App extends React.Component {
     if (exists || this.state.newName.trim() === '') {
         this.setState({ newName: '', newNumber: '' })
     } else {
+        const personObject = {
+            name: this.state.newName,
+            number: this.state.newNumber
+        }
+        axios.post('http://localhost:3001/persons', personObject)
+            .then(response => console.log(response))
         this.setState({ 
             persons: [...this.state.persons, { 
                 name: this.state.newName,
