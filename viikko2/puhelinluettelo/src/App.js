@@ -111,6 +111,7 @@ class App extends React.Component {
             })
             .catch(error => {
                 this.setState({
+                    persons: this.state.persons.filter(n => n.id !== person.id),
                     error: `Tapahtui jokin virhe`
                 })
                 setTimeout(() => this.setState({ error: null}), 1000)
