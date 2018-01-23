@@ -1,6 +1,6 @@
 import React from 'react'
-import axios from 'axios'
-import { Persons } from './components/Persons'
+import numberService from './services/numbers'
+import { Persons } from './components/persons'
 
 class App extends React.Component {
   constructor(props) {
@@ -14,7 +14,8 @@ class App extends React.Component {
   }
 
   componentWillMount() {
-    axios.get('http://localhost:3001/persons')
+    numberService
+        .getAll()
         .then(response => {
             this.setState({ persons: response.data })
         })
@@ -43,16 +44,14 @@ class App extends React.Component {
             name: this.state.newName,
             number: this.state.newNumber
         }
-        axios.post('http://localhost:3001/persons', personObject)
-            .then(response => console.log(response))
-        this.setState({ 
-            persons: [...this.state.persons, { 
-                name: this.state.newName,
-                number: this.state.newNumber 
-            }], 
-            newName: '',
-            newNumber: ''
-        })
+        numberService.create(personObject)
+            .then(response => {
+                this.setState({ 
+                    persons: [...this.state.persons, response.data], 
+                    newName: '',
+                    newNumber: ''
+                })
+            })
     }
   }
 
