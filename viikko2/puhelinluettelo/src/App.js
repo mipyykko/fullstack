@@ -1,6 +1,7 @@
 import React from 'react'
 import numberService from './services/numbers'
 import { PersonList } from './components/personList'
+import { Message, Error } from './components/notification'
 
 class App extends React.Component {
   constructor(props) {
@@ -9,7 +10,9 @@ class App extends React.Component {
         persons: [],
         newName: '',
         newNumber: '',
-        filter: ''
+        filter: '',
+        error: '',
+        message : ''
     }
   }
 
@@ -50,12 +53,20 @@ class App extends React.Component {
                 }
                 numberService.update(foundPerson.id, personObject)
                     .then(response => {
-                        const persons = this.state.persons.filter(person => person.id !== foundPerson.id)
+                        const persons = this.state.persons.filter(n=> n.id !== foundPerson.id)
                         this.setState({
                             persons: [...persons, response.data],
                             newName: '',
-                            newNumber: ''
+                            newNumber: '',
+                            message: `Käyttäjä ${response.data.name} päivitetty`
                         })
+                        setTimeout(() => this.setState({ message: null }), 1000)
+                    })
+                    .catch(error => {
+                        this.setState({
+                            error: `Tapahtui jokin virhe`
+                        })
+                        setTimeout(() => this.setState({ error: null}), 1000)
                     })
             }
         } else { 
@@ -68,8 +79,16 @@ class App extends React.Component {
                     this.setState({ 
                         persons: [...this.state.persons, response.data], 
                         newName: '',
-                        newNumber: ''
+                        newNumber: '',
+                        message: `Käyttäjä ${response.data.name} lisätty`
                     })
+                    setTimeout(() => this.setState({ message: null }), 1000)
+                })
+                .catch(error => {
+                    this.setState({
+                        error: `Tapahtui jokin virhe`
+                    })
+                    setTimeout(() => this.setState({ error: null}), 1000)
                 })
         }
   
@@ -85,8 +104,16 @@ class App extends React.Component {
                 var index = newPersons.indexOf(person)
                 newPersons.splice(index, 1)
                 this.setState({
-                    persons: newPersons
+                    persons: newPersons,
+                    message: `Käyttäjä ${person.name} poistettu`
                 })
+                setTimeout(() => this.setState({ message: null}), 1000)
+            })
+            .catch(error => {
+                this.setState({
+                    error: `Tapahtui jokin virhe`
+                })
+                setTimeout(() => this.setState({ error: null}), 1000)
             })
     }
   }
@@ -95,6 +122,8 @@ class App extends React.Component {
     return (
       <div>
         <h2>Puhelinluettelo</h2>
+        <Message message={this.state.message} />
+        <Error error={this.state.error} />
         <div>
             rajaa näytettäviä: <input
                 value={this.state.filter}
