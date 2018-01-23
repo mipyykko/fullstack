@@ -35,23 +35,44 @@ class App extends React.Component {
 
   addNumber = (event) => {
     event.preventDefault()
-    var exists = Object.keys(this.state.persons)
-        .some(key => this.state.persons[key].name.trim() === this.state.newName.trim())
-    if (exists || this.state.newName.trim() === '') {
+    const foundKey = Object.keys(this.state.persons)
+        .filter(key => this.state.persons[key].name.trim() === this.state.newName.trim())
+    const exists = foundKey.length > 0
+    if (this.state.newName.trim() === '') {
         this.setState({ newName: '', newNumber: '' })
     } else {
-        const personObject = {
-            name: this.state.newName,
-            number: this.state.newNumber
-        }
-        numberService.create(personObject)
-            .then(response => {
-                this.setState({ 
-                    persons: [...this.state.persons, response.data], 
-                    newName: '',
-                    newNumber: ''
+        if (exists) {
+            if (window.confirm('korvataanko ' + this.state.newName)) {
+                const foundPerson = this.state.persons[foundKey[0]]
+                const personObject = {
+                    ...foundPerson,
+                    number: this.state.newNumber    
+                }
+                numberService.update(foundPerson.id, personObject)
+                    .then(response => {
+                        const persons = this.state.persons.filter(person => person.id !== foundPerson.id)
+                        this.setState({
+                            persons: [...persons, response.data],
+                            newName: '',
+                            newNumber: ''
+                        })
+                    })
+            }
+        } else { 
+            const personObject = {
+                name: this.state.newName,
+                number: this.state.newNumber
+            } 
+            numberService.create(personObject)
+                .then(response => {
+                    this.setState({ 
+                        persons: [...this.state.persons, response.data], 
+                        newName: '',
+                        newNumber: ''
+                    })
                 })
-            })
+        }
+  
     }
   }
 
