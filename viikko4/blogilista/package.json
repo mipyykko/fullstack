@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "watch": "node_modules/.bin/nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node_modules/.bin/jest --verbose",
+    "lint": "node_modules/.bin/eslint ."
   },
   "author": "mipyykko",
   "license": "MIT",
@@ -17,6 +18,8 @@
     "mongoose": "^5.0.1"
   },
   "devDependencies": {
+    "eslint": "^4.16.0",
+    "jest": "^22.1.4",
     "nodemon": "^1.14.11"
   }
 }
