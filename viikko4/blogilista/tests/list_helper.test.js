@@ -62,7 +62,7 @@ const listWithSeveralBlogs = [
   }  
 ]
 
-const listWithSameLikes = [
+const listWithSameLikesAndAuthor = [
   {
     _id: "5a422ba71b54a676234d17fb",
     title: "TDD harms architecture",
@@ -79,6 +79,25 @@ const listWithSameLikes = [
     likes: 2,
     __v: 0
   }  
+]
+
+const listWithSameNumberOfAuthorsAndLikes = [
+  {
+    _id: "5a422b3a1b54a676234d17f9",
+    title: "Canonical string reduction",
+    author: "Edsger W. Dijkstra",
+    url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+    likes: 12,
+    __v: 0
+  },
+  {
+    _id: "5a422b891b54a676234d17fa",
+    title: "First class tests",
+    author: "Robert C. Martin",
+    url: "http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll",
+    likes: 12,
+    __v: 0
+  }
 ]
 
 const emptyList = []
@@ -125,8 +144,67 @@ describe('favorite blog', () => {
     expect(result).toEqual(listWithSeveralBlogs[2])
   })
 
-  test('when list has blogs with equal highest likes, it should return either one', () => {
-    const result = listHelper.favoriteBlog(listWithSameLikes)
+  test('when list has blogs with equal highest likes, it should return anyone', () => {
+    const result = listHelper.favoriteBlog(listWithSameLikesAndAuthor)
     expect(result).toEqual(expect.objectContaining({ likes: 2 }))
+  })
+})
+
+describe('most blogs', () => {
+  test('when list is empty, there should be nothing', () => {
+    const result = listHelper.mostBlogs(emptyList)
+    expect(result).toEqual({})
+  })
+
+  test('when list has only one blog, it should return the author of that one', () => {
+    const result = listHelper.mostBlogs(listWithOneBlog)
+    expect(result.author).toEqual(listWithOneBlog[0].author)
+  })
+
+  test('when list has several blogs, it should return the author with most blogs', () => {
+    const result = listHelper.mostBlogs(listWithSeveralBlogs)
+    expect(result.author).toEqual('Robert C. Martin')
+  })
+
+  test('when list has blogs with same amount of authors, it should return anyone', () => {
+    const result = listHelper.mostBlogs(listWithSameNumberOfAuthorsAndLikes)
+    expect(result.author).toEqual({ 
+      asymmetricMatch: actual => actual === 'Edsger W. Dijkstra' || 
+        actual === 'Robert C. Martin'
+      })
+  })
+})
+
+describe('most likes', () => {
+  test('when list is empty, there should be nothing', () => {
+    const result = listHelper.mostLikes(emptyList)
+    expect(result).toEqual({})
+  })
+
+  test('when list has only one blog, it should return the author and likes of that one', () => {
+    const result = listHelper.mostLikes(listWithOneBlog)
+    expect(result)
+      .toEqual({ author: listWithOneBlog[0].author, likes: listWithOneBlog[0].likes })
+  })
+
+  test('when the list has only one author, it should return the author and combined likes', () => {
+    const result = listHelper.mostLikes(listWithSameLikesAndAuthor)
+    expect(result)
+      .toEqual({ author: 'Robert C. Martin', likes: 4 })
+  })
+
+  test('when list has several authors, it should return the author with most likes', () => {
+    const result = listHelper.mostLikes(listWithSeveralBlogs)
+    expect(result.author).toEqual('Edsger W. Dijkstra')
+    expect(result.likes).toBe(17)
+  })
+
+  test('when list has authors with same amount of likes, it should return anyone', () => {
+    const result = listHelper.mostLikes(listWithSameNumberOfAuthorsAndLikes)
+    expect(result.author).toEqual({ 
+      asymmetricMatch: actual => actual === 'Edsger W. Dijkstra' || 
+        actual === 'Robert C. Martin'
+      })
+    expect(result.likes).toEqual(12)
   })
 })
