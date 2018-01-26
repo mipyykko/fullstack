@@ -57,31 +57,129 @@ const initialBlogs = [
 beforeAll(async () => {
   await Blog.remove({})
 
-  initialBlogs.map(async (blog) => await new Blog(blog).save())
+  const blogObjects = initialBlogs.map(blog => new Blog(blog))
+  const promiseArray = blogObjects.map(blog => blog.save())
+  await Promise.all(promiseArray)
 })
 
-test('blogs are returned as json', async () => {
-  await api
-    .get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
-})
+describe('HTTP GET tests', () => {
+  test('blogs are returned as json', async () => {
+    await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+  })
 
-test('all blogs are returned', async () => {
-  const res = await api
-    .get('/api/blogs')
+  test('all blogs are returned', async () => {
+    const res = await api
+      .get('/api/blogs')
 
-  expect(res.body.length).toBe(initialBlogs.length)
-})
+    expect(res.body.length).toBe(initialBlogs.length)
+  })
 
-test('a specific blog is among the blogs', async() => {
-  const res = await api
-    .get('/api/blogs')
+  test('a specific blog is among the blogs', async () => {
+    const res = await api
+      .get('/api/blogs')
 
-  const titles = res.body.map(n => n.title)
+    const titles = res.body.map(n => n.title)
 
-  expect(titles).toContain('TDD harms architecture')
-})
+    expect(titles).toContain('TDD harms architecture')
+  })
+}, {})
+
+describe('HTTP POST tests', () => {
+  test('a valid blog can be added', async () => {
+    try {
+      let initBlogs = await api
+        .get('/api/blogs')
+
+      let newBlog = {
+        title: 'testTitle',
+        author: 'testAuthor',
+        url: 'http://url.url',
+        likes: 0
+      }
+
+      await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+      const res = await api
+        .get('/api/blogs')
+
+      const titles = res.body.map(t => t.title)
+      expect(res.body.length).toEqual(initBlogs.body.length + 1)
+      expect(titles).toContain('testTitle')
+    } catch (exception) {
+      console.log(exception)
+    }
+  })
+
+  test('empty blog is not added', async () => {
+    let initBlogs = await api
+      .get('/api/blogs')
+
+    await api
+      .post('/api/blogs')
+      .send({})
+      .expect(400)
+
+    const res = await api
+      .get('/api/blogs')
+
+    expect(res.body.length).toBe(initBlogs.body.length)
+  })
+
+  test('blogs with missing key(s) are not added', async () => {
+
+    let initBlogs = await api
+      .get('/api/blogs')
+
+    let newBlog = {
+      title: 'testTitle 2',
+      author: 'testAuthor 2',
+      url: 'http://url.url2'
+    }
+
+    let strippedBlogObjects = Object.keys(newBlog).map((key) => {
+      let strippedBlog = { ...newBlog }
+      delete strippedBlog[key]
+      return strippedBlog
+    })
+
+    await strippedBlogObjects.map(async (blog) => {
+      await api
+        .post('/api/blogs')
+        .send(blog)
+        .expect(400)
+
+      const res = await api
+        .get('/api/blogs')
+
+      expect(res.body.length).toBe(initBlogs.body.length)
+    })
+
+  })
+
+  test('likes initialized at 0', async () => {
+    let newBlog = {
+      title: 'testTitle 3',
+      author: 'testAuthor 3',
+      url: 'http:/url.url3'
+    }
+
+    const savedBlog = await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    expect(savedBlog.body.likes).toEqual(0)
+  })
+}, {})
+
 
 afterAll(() => {
   server.close()
