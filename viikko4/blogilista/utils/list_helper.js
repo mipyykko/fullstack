@@ -21,7 +21,7 @@ const mostBlogs = (blogs) => {
   }, {})
 
   const author = Object.keys(blogsByAuthor)
-    .reduce((prev, curr) => blogsByAuthor[prev] > blogsByAuthor[curr] ? 
+    .reduce((prev, curr) => blogsByAuthor[prev] > blogsByAuthor[curr] ?
       prev : curr, {})
 
   return author.length > 0 ? { author, blogs: blogsByAuthor[author] } : {}
@@ -34,12 +34,12 @@ const mostLikes = (blogs) => {
     } else {
       likes[blog.author] = blog.likes
     }
-    
+
     return likes
   }, {})
 
   const author = Object.keys(likesByAuthor)
-    .reduce((prev, curr) => likesByAuthor[prev] > likesByAuthor[curr] ? 
+    .reduce((prev, curr) => likesByAuthor[prev] > likesByAuthor[curr] ?
       prev : curr, {})
 
   return author.length > 0 ? { author, likes: likesByAuthor[author] } : {}

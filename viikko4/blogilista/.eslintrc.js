@@ -21,11 +21,6 @@ module.exports = {
             "error",
             "never"
         ],
-        "globals": {
-            "test": true,
-            "expect": true,
-            "describe": true
-        },
         "eqeqeq": "error",
         "no-trailing-spaces": "error",
         "object-curly-spacing": [
@@ -37,5 +32,13 @@ module.exports = {
             { "before": true, "after": true }
         ],
         "no-console": 0
+    },
+    parserOptions: {
+        "ecmaVersion": 8
+    },
+    "globals": {
+        "test": true,
+        "expect": true,
+        "describe": true
     }
 };
