@@ -31,4 +31,19 @@ blogsRouter.post('/', async (req, res) => {
   }
 })
 
+blogsRouter.delete('/:id', async (req, res) => {
+  try {
+    await Blog.findByIdAndRemove(req.params.id)
+
+    // if (removedBlog.title === undefined) {
+    //   //
+    // }
+
+    res.status(204).end()
+  } catch (exception) {
+    console.log('got here anyway')
+    console.log(exception)
+    res.status(400).send({ error: 'wrong id' })
+  }
+})
 module.exports = blogsRouter

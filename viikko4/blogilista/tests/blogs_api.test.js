@@ -2,96 +2,44 @@ const supertest = require('supertest')
 const { app, server } = require('../index')
 const api = supertest(app)
 const Blog = require('../models/blog')
-
-const initialBlogs = [
-  {
-    _id: '5a422a851b54a676234d17f7',
-    title: 'React patterns',
-    author: 'Michael Chan',
-    url: 'https://reactpatterns.com/',
-    likes: 7,
-    __v: 0
-  },
-  {
-    _id: '5a422aa71b54a676234d17f8',
-    title: 'Go To Statement Considered Harmful',
-    author: 'Edsger W. Dijkstra',
-    url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
-    likes: 5,
-    __v: 0
-  },
-  {
-    _id: '5a422b3a1b54a676234d17f9',
-    title: 'Canonical string reduction',
-    author: 'Edsger W. Dijkstra',
-    url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
-    likes: 12,
-    __v: 0
-  },
-  {
-    _id: '5a422b891b54a676234d17fa',
-    title: 'First class tests',
-    author: 'Robert C. Martin',
-    url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll',
-    likes: 10,
-    __v: 0
-  },
-  {
-    _id: '5a422ba71b54a676234d17fb',
-    title: 'TDD harms architecture',
-    author: 'Robert C. Martin',
-    url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
-    likes: 0,
-    __v: 0
-  },
-  {
-    _id: '5a422bc61b54a676234d17fc',
-    title: 'Type wars',
-    author: 'Robert C. Martin',
-    url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
-    likes: 2,
-    __v: 0
-  }
-]
+const helper = require('./test_helper')
 
 beforeAll(async () => {
   await Blog.remove({})
 
-  const blogObjects = initialBlogs.map(blog => new Blog(blog))
+  const blogObjects = helper.initialBlogs.map(blog => new Blog(blog))
   const promiseArray = blogObjects.map(blog => blog.save())
   await Promise.all(promiseArray)
 })
 
-describe('HTTP GET tests', () => {
-  test('blogs are returned as json', async () => {
-    await api
+describe.skip('HTTP GET tests', async () => {
+  test('all blogs are returned as json', async () => {
+    const blogs = await helper.blogsInDb()
+
+    const res = await api
       .get('/api/blogs')
       .expect(200)
       .expect('Content-Type', /application\/json/)
-  })
 
-  test('all blogs are returned', async () => {
-    const res = await api
-      .get('/api/blogs')
+    expect(res.body.length).toBe(blogs.length)
 
-    expect(res.body.length).toBe(initialBlogs.length)
+    const returnedTitles = res.body.map(blog => blog.title)
+    blogs.forEach(blog => expect(returnedTitles).toContain(blog.title))
   })
 
   test('a specific blog is among the blogs', async () => {
-    const res = await api
-      .get('/api/blogs')
+    const blogs = await helper.blogsInDb()
 
-    const titles = res.body.map(n => n.title)
+    const titles = blogs.map(n => n.title)
 
     expect(titles).toContain('TDD harms architecture')
   })
 }, {})
 
-describe('HTTP POST tests', () => {
+describe.skip('HTTP POST tests', async () => {
   test('a valid blog can be added', async () => {
     try {
-      let initBlogs = await api
-        .get('/api/blogs')
+      const before = await helper.blogsInDb()
 
       let newBlog = {
         title: 'testTitle',
@@ -106,11 +54,10 @@ describe('HTTP POST tests', () => {
         .expect(201)
         .expect('Content-Type', /application\/json/)
 
-      const res = await api
-        .get('/api/blogs')
+      const after = await helper.blogsInDb()
 
-      const titles = res.body.map(t => t.title)
-      expect(res.body.length).toEqual(initBlogs.body.length + 1)
+      const titles = after.map(t => t.title)
+      expect(after.length).toEqual(before.length + 1)
       expect(titles).toContain('testTitle')
     } catch (exception) {
       console.log(exception)
@@ -118,24 +65,21 @@ describe('HTTP POST tests', () => {
   })
 
   test('empty blog is not added', async () => {
-    let initBlogs = await api
-      .get('/api/blogs')
+    const before = await helper.blogsInDb()
 
     await api
       .post('/api/blogs')
       .send({})
       .expect(400)
 
-    const res = await api
-      .get('/api/blogs')
+    const after = await helper.blogsInDb()
 
-    expect(res.body.length).toBe(initBlogs.body.length)
+    expect(before.length).toBe(after.length)
   })
 
   test('blogs with missing key(s) are not added', async () => {
 
-    let initBlogs = await api
-      .get('/api/blogs')
+    const before = await helper.blogsInDb()
 
     let newBlog = {
       title: 'testTitle 2',
@@ -155,12 +99,11 @@ describe('HTTP POST tests', () => {
         .send(blog)
         .expect(400)
 
-      const res = await api
-        .get('/api/blogs')
+      const after = await helper.blogsInDb()
 
-      expect(res.body.length).toBe(initBlogs.body.length)
+
+      expect(before.length).toBe(after.length)
     })
-
   })
 
   test('likes initialized at 0', async () => {
@@ -180,6 +123,47 @@ describe('HTTP POST tests', () => {
   })
 }, {})
 
+describe('HTTP DELETE tests', async () => {
+  let addedBlog
+
+  beforeAll(async () => {
+    addedBlog = new Blog({
+      title: 'test to be deleted',
+      author: 'testAuthor',
+      url: 'http:/url.url'
+    })
+    await addedBlog.save()
+  })
+
+  test('delete with id succeeds', async () => {
+    const before = await helper.blogsInDb()
+
+    await api
+      .delete(`/api/blogs/${addedBlog.id}`)
+      .expect(204)
+
+    const after = await helper.blogsInDb()
+
+    const titles = after.map(blog => blog.title)
+
+    expect(titles).not.toContain(addedBlog.title)
+    expect(after.length).toBe(before.length - 1)
+  })
+
+  test('delete with nonexistent id fails', async () => {
+    const before = await helper.blogsInDb()
+
+    const nonExistentId = await helper.nonExistentId()
+
+    await api
+      .delete(`/api/blogs/${nonExistentId}`)
+      .expect(400)
+
+    const after = await helper.blogsInDb()
+
+    expect(after.length).toBe(before.length)
+  })
+}, {})
 
 afterAll(() => {
   server.close()
