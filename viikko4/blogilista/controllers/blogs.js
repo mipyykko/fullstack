@@ -6,8 +6,20 @@ blogsRouter.get('/', async (req, res) => {
   res.json(blogs.map(Blog.format))
 })
 
+blogsRouter.get('/:id', async (req, res) => {
+  const blog = await Blog
+    .findById(req.params.id)
+
+  if (blog === null) {
+    return res.status(404).json({ error: 'wrong id' })
+  }
+
+  res.json(Blog.format(blog))
+})
+
 blogsRouter.post('/', async (req, res) => {
   try {
+    console.log(req.body)
     if (req.body === undefined) {
       return res.status(400).json({ error: 'content missing' })
     }
@@ -33,17 +45,40 @@ blogsRouter.post('/', async (req, res) => {
 
 blogsRouter.delete('/:id', async (req, res) => {
   try {
-    await Blog.findByIdAndRemove(req.params.id)
+    let removedBlog = await Blog.findByIdAndRemove(req.params.id)
 
-    // if (removedBlog.title === undefined) {
-    //   //
-    // }
+    if (removedBlog.title === undefined) {
+      // throws if nonexistent
+    }
 
     res.status(204).end()
   } catch (exception) {
-    console.log('got here anyway')
     console.log(exception)
     res.status(400).send({ error: 'wrong id' })
   }
 })
+
+blogsRouter.put('/:id', async (req, res) => {
+  try {
+    const body = req.body
+
+    const editBlog = {
+      title: body.title,
+      author: body.author,
+      likes: body.likes
+    }
+
+    let editedBlog = await Blog.findByIdAndUpdate(req.params.id, editBlog, { new: true })
+
+    if (editedBlog.title === undefined) {
+      // throw
+    }
+
+    res.status(200).json(Blog.format(editedBlog))
+  } catch (exception) {
+    //console.log(exception)
+    res.status(400).send({ error: 'wrong id' })
+  }
+})
+
 module.exports = blogsRouter

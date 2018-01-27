@@ -12,7 +12,7 @@ beforeAll(async () => {
   await Promise.all(promiseArray)
 })
 
-describe.skip('HTTP GET tests', async () => {
+describe('HTTP GET tests', async () => {
   test('all blogs are returned as json', async () => {
     const blogs = await helper.blogsInDb()
 
@@ -34,9 +34,27 @@ describe.skip('HTTP GET tests', async () => {
 
     expect(titles).toContain('TDD harms architecture')
   })
+
+  test('get with valid id returns right blog', async () => {
+    const blogs = await helper.blogsInDb()
+
+    const res = await api
+      .get(`/api/blogs/${blogs[0].id}`)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    expect(res.body.title).toEqual(blogs[0].title)
+  })
+
+  test('get with nonexistent id does not return anything', async () => {
+    let nonexistent = await helper.nonExistentId()
+    await api
+      .get(`/api/blogs/${nonexistent}`)
+      .expect(404)
+  })
 }, {})
 
-describe.skip('HTTP POST tests', async () => {
+describe('HTTP POST tests', async () => {
   test('a valid blog can be added', async () => {
     try {
       const before = await helper.blogsInDb()
@@ -93,17 +111,18 @@ describe.skip('HTTP POST tests', async () => {
       return strippedBlog
     })
 
-    await strippedBlogObjects.map(async (blog) => {
+    let promiseArray = await strippedBlogObjects.map(async (blog) => {
       await api
         .post('/api/blogs')
         .send(blog)
         .expect(400)
-
-      const after = await helper.blogsInDb()
-
-
-      expect(before.length).toBe(after.length)
     })
+
+    Promise.all(promiseArray)
+
+    const after = await helper.blogsInDb()
+
+    expect(before.length).toBe(after.length)
   })
 
   test('likes initialized at 0', async () => {
@@ -155,13 +174,67 @@ describe('HTTP DELETE tests', async () => {
 
     const nonExistentId = await helper.nonExistentId()
 
-    await api
+    let res = await api
       .delete(`/api/blogs/${nonExistentId}`)
       .expect(400)
 
     const after = await helper.blogsInDb()
 
+    expect(res.body.error).toBeDefined()
     expect(after.length).toBe(before.length)
+  })
+}, {})
+
+describe('HTTP PUT tests', async () => {
+  let addedBlog
+
+  beforeAll(async () => {
+    addedBlog = new Blog({
+      title: 'test to be edited',
+      author: 'testAuthor',
+      url: 'http:/url.url',
+      likes: 0
+    })
+    addedBlog = await addedBlog.save()
+  })
+
+  test('put with correct id succeeds', async () => {
+
+    const before = await helper.blogsInDb()
+
+    let updatedBlog = { ...addedBlog._doc, likes: addedBlog.likes + 1 }
+
+    let res = await api
+      .put(`/api/blogs/${addedBlog._id}`)
+      .send(updatedBlog)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const after = await helper.blogsInDb()
+
+    expect(res.body.likes).toEqual(addedBlog.likes + 1)
+    expect(after.length).toEqual(before.length)
+  })
+
+  test('put with incorrect id fails', async () => {
+    let originalCopy = await api
+      .get(`/api/blogs/${addedBlog._id}`)
+
+    let updatedBlog = { ...originalCopy.body._doc, likes: originalCopy.body.likes + 1 }
+
+    let nonexistent = await helper.nonExistentId()
+
+    let res = await api
+      .put(`/api/blogs/${nonexistent}`)
+      .send(updatedBlog)
+      .expect(400)
+
+    expect(res.body.error).toBeDefined()
+
+    let updatedCopy = await api
+      .get(`/api/blogs/${addedBlog._id}`)
+
+    expect(originalCopy.body.likes).toEqual(updatedCopy.body.likes)
   })
 }, {})
 
