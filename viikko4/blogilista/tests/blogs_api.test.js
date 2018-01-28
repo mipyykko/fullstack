@@ -4,6 +4,8 @@ const api = supertest(app)
 const Blog = require('../models/blog')
 const helper = require('./test_helper')
 
+// tests borked with login
+
 beforeAll(async () => {
   await Blog.remove({})
 
