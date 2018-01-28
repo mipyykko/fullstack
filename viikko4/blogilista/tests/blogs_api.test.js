@@ -12,7 +12,7 @@ beforeAll(async () => {
   await Promise.all(promiseArray)
 })
 
-describe('HTTP GET tests', async () => {
+describe.skip('HTTP GET tests', async () => {
   test('all blogs are returned as json', async () => {
     const blogs = await helper.blogsInDb()
 
@@ -54,7 +54,7 @@ describe('HTTP GET tests', async () => {
   })
 }, {})
 
-describe('HTTP POST tests', async () => {
+describe.skip('HTTP POST tests', async () => {
   test('a valid blog can be added', async () => {
     try {
       const before = await helper.blogsInDb()
@@ -142,7 +142,7 @@ describe('HTTP POST tests', async () => {
   })
 }, {})
 
-describe('HTTP DELETE tests', async () => {
+describe.skip('HTTP DELETE tests', async () => {
   let addedBlog
 
   beforeAll(async () => {
@@ -185,7 +185,7 @@ describe('HTTP DELETE tests', async () => {
   })
 }, {})
 
-describe('HTTP PUT tests', async () => {
+describe.skip('HTTP PUT tests', async () => {
   let addedBlog
 
   beforeAll(async () => {
