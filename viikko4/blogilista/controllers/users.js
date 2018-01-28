@@ -11,6 +11,22 @@ usersRouter.post('/', async (req, res) => {
   try {
     const body = req.body
 
+    if (body.username === undefined) {
+      return res.status(500).json({ error: 'username missing ' })
+    }
+    if (body.password === undefined) {
+      return res.status(500).json({ error: 'password missing' })
+    }
+
+    if (body.password.length < 3) {
+      return res.status(500).json({ error: 'password too short (min: 3)' })
+    }
+    const unique = await User.findOne({ username: body.username })
+
+    if (unique !== null) {
+      return res.status(500).json({ error: 'username already in use' })
+    }
+
     const saltRounds = 10
     const passwordHash = await bcrypt.hash(body.password, saltRounds)
 

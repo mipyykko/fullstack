@@ -14,7 +14,7 @@ describe.only('only one user in db', async () => {
     await rootUser.save()
   })
 
-  test('GET returns user', async () => {
+  test('GET returns default user', async () => {
     const res = await api
       .get('/api/users')
       .expect(200)
@@ -47,6 +47,43 @@ describe.only('only one user in db', async () => {
     const usernames = after.map(u => u.username)
 
     expect(usernames).toContainEqual(newUser.username)
+  })
+
+  test('POST fails with existing username', async () => {
+    const before = helper.usersInDb()
+
+    const newUser = { ...rootUser }
+
+    const res = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(500)
+
+    expect(res.body.error).toBeDefined()
+
+    const after = helper.usersInDb()
+
+    expect(before.length).toBe(after.length)
+  })
+
+  test('POST fails with too short password', async () => {
+    const before = helper.usersInDb()
+
+    const newUser = {
+      username: 'failtest',
+      password: 'x'
+    }
+
+    const res = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(500)
+
+    expect(res.body.error).toBeDefined()
+
+    const after = helper.usersInDb()
+
+    expect(before.length).toBe(after.length)
   })
 })
 
