@@ -9,11 +9,14 @@ const blogSchema = new mongoose.Schema({
 })
 
 blogSchema.statics.format = function(blog) {
-  const newBlog = { ...blog._doc, id: blog._id }
-  delete newBlog._id
-  delete newBlog.__v
-
-  return newBlog
+  return {
+    id: blog._id,
+    title: blog.title,
+    author: blog.author,
+    url: blog.url,
+    likes: blog.likes,
+    user: blog.user
+  }
 }
 
 const Blog = mongoose.model('Blog', blogSchema)

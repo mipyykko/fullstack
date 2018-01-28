@@ -2,8 +2,14 @@ const bcrypt = require('bcrypt')
 const usersRouter = require('express').Router()
 const User = require('../models/user')
 
+usersRouter.get('/reset', async (req, res) => {
+  await User.remove({})
+})
+
 usersRouter.get('/', async (req, res) => {
-  const users = await User.find({})
+  const users = await User
+    .find({})
+    .populate('blogs', { title: 1, author: 1, url: 1, likes: 1 })
   res.json(users.map(User.format))
 })
 
@@ -12,19 +18,19 @@ usersRouter.post('/', async (req, res) => {
     const body = req.body
 
     if (body.username === undefined) {
-      return res.status(500).json({ error: 'username missing ' })
+      return res.status(400).json({ error: 'username missing ' })
     }
     if (body.password === undefined) {
-      return res.status(500).json({ error: 'password missing' })
+      return res.status(400).json({ error: 'password missing' })
     }
 
     if (body.password.length < 3) {
-      return res.status(500).json({ error: 'password too short (min: 3)' })
+      return res.status(400).json({ error: 'password too short (min: 3)' })
     }
     const unique = await User.findOne({ username: body.username })
 
     if (unique !== null) {
-      return res.status(500).json({ error: 'username already in use' })
+      return res.status(400).json({ error: 'username already in use' })
     }
 
     const saltRounds = 10

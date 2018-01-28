@@ -1,8 +1,12 @@
+const jwt = require('jsonwebtoken')
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 blogsRouter.get('/', async (req, res) => {
-  const blogs = await Blog.find({})
+  const blogs = await Blog
+    .find({})
+    .populate('user', { username: 1, name: 1 })
   res.json(blogs.map(Blog.format))
 })
 
@@ -19,7 +23,12 @@ blogsRouter.get('/:id', async (req, res) => {
 
 blogsRouter.post('/', async (req, res) => {
   try {
-    console.log(req.body)
+    const decodedToken = jwt.verify(req.token, process.env.SECRET)
+
+    if (!req.token || !decodedToken.id) {
+      return res.status(401).json({ error: 'token missing or invalid' })
+    }
+
     if (req.body === undefined) {
       return res.status(400).json({ error: 'content missing' })
     }
@@ -33,18 +42,35 @@ blogsRouter.post('/', async (req, res) => {
       return res.status(400).json({ error: 'url missing' })
     }
 
-    const blog = new Blog(req.body)
+    const user = await User.findById(decodedToken.id)
+
+    const blog = new Blog({ ...req.body, user: user.id })
 
     const savedBlog = await blog.save()
+    user.blogs = [ ...user.blogs, savedBlog._id ]
+    await user.save()
+
     return res.status(201).json(Blog.format(savedBlog))
   } catch (exception) {
-    console.log(exception)
-    res.status(500).json({ error: '??!' })
+    if (exception.name === 'JsonWebTokenError') {
+      res.status(401).json({ error: exception.message })
+    } else {
+      console.log(exception)
+      res.status(500).json({ error: '??!' })
+    }
   }
 })
 
 blogsRouter.delete('/:id', async (req, res) => {
   try {
+    const decodedToken = jwt.verify(req.token, process.env.SECRET)
+    const removableBlog = await Blog.findById(req.params.id)
+
+    if (! (req.token && decodedToken &&
+          removableBlog.user.toString() === decodedToken.id.toString())) {
+      res.status(401).json({ error: 'unauthorized user' })
+    }
+
     let removedBlog = await Blog.findByIdAndRemove(req.params.id)
 
     if (removedBlog.title === undefined) {

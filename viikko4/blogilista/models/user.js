@@ -4,8 +4,8 @@ const userSchema = new mongoose.Schema({
   username: String,
   name: String,
   passwordHash: String,
-  adult: { type: Boolean, default: true }
-  //blogs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Blog' }]
+  adult: { type: Boolean, default: true },
+  blogs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Blog' }]
 })
 
 userSchema.statics.format = function(user) {
@@ -13,8 +13,8 @@ userSchema.statics.format = function(user) {
     id: user._id,
     username: user.username,
     name: user.name,
-    adult: Boolean
-    //blogs: user.blogs
+    adult: user.adult,
+    blogs: user.blogs
   }
 }
 

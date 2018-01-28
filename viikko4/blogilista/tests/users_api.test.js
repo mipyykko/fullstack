@@ -57,7 +57,7 @@ describe.only('only one user in db', async () => {
     const res = await api
       .post('/api/users')
       .send(newUser)
-      .expect(500)
+      .expect(400)
 
     expect(res.body.error).toBeDefined()
 
@@ -77,7 +77,7 @@ describe.only('only one user in db', async () => {
     const res = await api
       .post('/api/users')
       .send(newUser)
-      .expect(500)
+      .expect(400)
 
     expect(res.body.error).toBeDefined()
 
