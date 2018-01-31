@@ -3,6 +3,7 @@ import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import CreateBlogForm from './components/CreateBlogForm'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -113,21 +114,25 @@ class App extends React.Component {
           error={this.state.error}
         />
         {this.state.user === null ?
-          <LoginForm
-            handleLogin={this.login}
-            handleLoginFormChange={this.handleLoginFormChange}
-            username={this.state.username}
-            password={this.state.password}
-          /> :
+          <Togglable buttonLabel="log in">
+            <LoginForm
+              handleLogin={this.login}
+              handleLoginFormChange={this.handleLoginFormChange}
+              username={this.state.username}
+              password={this.state.password}
+            />
+          </Togglable> :
           <div>
             {loggedIn()}
-            <CreateBlogForm
-              handleCreateBlog={this.createBlog}
-              handleCreateBlogFormChange={this.handleCreateBlogFormChange}
-              title={this.state.title}
-              author={this.state.author}
-              url={this.state.url}
-            />
+            <Togglable buttonLabel="new blog">
+              <CreateBlogForm
+                handleCreateBlog={this.createBlog}
+                handleCreateBlogFormChange={this.handleCreateBlogFormChange}
+                title={this.state.title}
+                author={this.state.author}
+                url={this.state.url}
+              />
+            </Togglable>
             <BlogForm
               blogs={this.state.blogs}
             />
