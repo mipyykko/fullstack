@@ -2,6 +2,7 @@ import React from 'react'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import CreateBlogForm from './components/CreateBlogForm'
+import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -37,18 +38,30 @@ class App extends React.Component {
 
       window.localStorage.setItem('loggedInUser', JSON.stringify(user))
       blogService.setToken(user.token)
-      this.setState({ username: '', password: '', user })
-    } catch (exception) {
-      this.setState({ error: 'wrong user or password' })
+      this.setState({
+        notification: `${user.name} logged in`,
+        username: '', password: '', user
+      })
       setTimeout(() => {
-        this.setState({ error: null })
+        this.setState({ notification: null })
+      }, 2000)
+    } catch (exception) {
+      this.setState({ error: 'wrong user or password' })
+      setTimeout(() => {
+        this.setState({ error: null })
       }, 2000)
     }
   }
 
   logout = () => {
     window.localStorage.removeItem('loggedInUser')
-    this.setState({ user: null })
+    this.setState({
+      notification: `${this.state.user.name} logged out`,
+      user: null
+    })
+    setTimeout(() => {
+      this.setState({ notification: null })
+    }, 2000)
   }
 
   handleLoginFormChange = (event) => {
@@ -66,7 +79,13 @@ class App extends React.Component {
       if (newBlog !== null) {
         this.setState({ blogs: [...this.state.blogs, newBlog ] })
       }
-      this.setState({ title: '', author: '', url: '' })
+      this.setState({
+        notification: `blog ${newBlog.title} created`,
+        title: '', author: '', url: ''
+      })
+      setTimeout(() => {
+        this.setState({ notification: null })
+      }, 2000)
     } catch (exception) {
       this.setState({ error: 'missing fields ' })
       setTimeout(() => {
@@ -89,6 +108,10 @@ class App extends React.Component {
     return (
       <div>
         <h2>blogs</h2>
+        <Notification
+          notification={this.state.notification}
+          error={this.state.error}
+        />
         {this.state.user === null ?
           <LoginForm
             handleLogin={this.login}
