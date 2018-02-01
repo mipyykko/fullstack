@@ -16,9 +16,11 @@ class App extends React.Component {
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     blogService.getAll().then(blogs =>
+    {
       this.setState({ blogs })
+    }
     )
 
     const loggedUserJSON = window.localStorage.getItem('loggedInUser')
@@ -99,6 +101,17 @@ class App extends React.Component {
     this.setState({ [event.target.name]: event.target.value })
   }
 
+  handleLike = (temp) => {
+    console.log(temp)
+  }
+
+  toggleExpanded = (ref) => {
+    console.log(ref)
+    let expanded = this.state.expanded
+    expanded[ref] = !expanded[ref]
+    this.setState({ expanded })
+  }
+
   render() {
     const loggedIn = () => (
       <div>
@@ -135,6 +148,7 @@ class App extends React.Component {
             </Togglable>
             <BlogForm
               blogs={this.state.blogs}
+              handleLike={this.handleLike}
             />
           </div>
         }
