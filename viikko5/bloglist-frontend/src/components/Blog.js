@@ -11,9 +11,9 @@ export default class Blog extends React.Component {
     this.setState({ visible: !this.state.visible })
   }
 
-  // ({ blog, expanded, handleLike, toggleExpanded }) => (
   render() {
     const blog = this.props.blog
+    const deletable = this.props.deletable
 
     let addedBy = blog.user
       ? blog.user.name
@@ -38,7 +38,7 @@ export default class Blog extends React.Component {
           <p>{blog.likes} like{blog.likes !== 1 ? 's' : ''}</p>
           <p><button onClick={this.props.handleLike}>like</button></p>
           <p>added by {addedBy}</p>
-          <p><button onClick={this.props.handleDelete} style={{ color: 'red' }}>delete</button></p>
+          {deletable && <p><button onClick={this.props.handleDelete} style={{ color: 'red' }}>delete</button></p>}
         </div>
       </div>
     )
