@@ -16,8 +16,8 @@ export default class Blog extends React.Component {
     const blog = this.props.blog
 
     let addedBy = blog.user
-      ? `added by ${blog.user.name}`
-      : ''
+      ? blog.user.name
+      : 'anonymous'
 
 
     const blogStyle = {
@@ -37,7 +37,8 @@ export default class Blog extends React.Component {
           <p><a href={blog.url}>{blog.url}</a></p>
           <p>{blog.likes} like{blog.likes !== 1 ? 's' : ''}</p>
           <p><button onClick={this.props.handleLike}>like</button></p>
-          <p>{addedBy}</p>
+          <p>added by {addedBy}</p>
+          <p><button onClick={this.props.handleDelete} style={{ color: 'red' }}>delete</button></p>
         </div>
       </div>
     )

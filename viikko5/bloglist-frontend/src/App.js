@@ -127,11 +127,33 @@ class App extends React.Component {
     }
   }
 
-  toggleExpanded = (ref) => {
-    console.log(ref)
-    let expanded = this.state.expanded
-    expanded[ref] = !expanded[ref]
-    this.setState({ expanded })
+  handleDelete = async (id) => {
+    try {
+      const deletedBlog = this.state.blogs.find(blog => id === blog.id)
+
+      if (deletedBlog === null) {
+        throw new Error('wrong id?')
+      }
+      if (deletedBlog.user && deletedBlog.user.username !== this.state.user.username) {
+        throw new Error('wrong user!')
+      }
+
+      if (window.confirm(`delete '${deletedBlog.title}' by ${deletedBlog.author}?`)) {
+        await blogService.remove(deletedBlog)
+        this.setState({
+          blogs: this.state.blogs.filter(blog => blog.id !== deletedBlog.id),
+          notification: `${deletedBlog.title} deleted` })
+        setTimeout(() => {
+          this.setState({ notification: null })
+        }, 2000)
+      }
+    } catch (exception) {
+      this.setState({ error: 'cannot delete that!' })
+      setTimeout(() => {
+        this.setState({ error: null })
+      }, 2000)
+      console.log(exception)
+    }
   }
 
   render() {
@@ -140,6 +162,8 @@ class App extends React.Component {
         {this.state.user.name} logged in <button onClick={this.logout}>Logout</button>
       </div>
     )
+
+    const sortedBlogs = this.state.blogs.sort((a, b) => b.likes - a.likes)
 
     return (
       <div>
@@ -171,8 +195,9 @@ class App extends React.Component {
               />
             </Togglable>
             <BlogForm
-              blogs={this.state.blogs}
+              blogs={sortedBlogs}
               handleLike={this.handleLike}
+              handleDelete={this.handleDelete}
             />
           </div>
         }
