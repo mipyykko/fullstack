@@ -63,10 +63,15 @@ blogsRouter.post('/', async (req, res) => {
 
 blogsRouter.delete('/:id', async (req, res) => {
   try {
-    const decodedToken = jwt.verify(req.token, process.env.SECRET)
+    let decodedToken
+
+    if (req.token) {
+      decodedToken = jwt.verify(req.token, process.env.SECRET)
+    }
     const removableBlog = await Blog.findById(req.params.id)
 
-    if (! (req.token && decodedToken &&
+    if (removableBlog.user !== undefined && // anonymous can be deleted
+        ! (req.token && decodedToken &&
           removableBlog.user.toString() === decodedToken.id.toString())) {
       res.status(401).json({ error: 'unauthorized user' })
     }
