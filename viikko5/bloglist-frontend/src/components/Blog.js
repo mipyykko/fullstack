@@ -6,26 +6,38 @@ export default class Blog extends React.Component {
     this.state = { visible: false }
   }
 
-  toggleVisibility() {
+  toggleVisibility = (event) => {
+    event.preventDefault()
     this.setState({ visible: !this.state.visible })
   }
 
   // ({ blog, expanded, handleLike, toggleExpanded }) => (
   render() {
-    let addedBy = this.props.blog.user
-      ? `added by ${this.props.blog.user.name}`
+    const blog = this.props.blog
+
+    let addedBy = blog.user
+      ? `added by ${blog.user.name}`
       : ''
 
+
+    const blogStyle = {
+      paddingTop: 10,
+      paddingLeft: 2,
+      border: 'solid',
+      borderWidth: 1,
+      marginBottom: 5
+    }
+
     return(
-      <div onClick={() => this.toggleVisibility()}>
-        <div>
-          {this.props.blog.title} {this.props.blog.author} {this.props.expanded}
+      <div>
+        <div style={blogStyle} onClick={this.toggleVisibility}>
+          {blog.title} {blog.author}
         </div>
         <div style={{ display: this.state.visible ? '' : 'none' }}>
-          <a href={this.props.blog.url}>{this.props.blog.url}</a>
-          {this.props.blog.likes} like{this.props.blog.likes !== 1 ? 's' : ''}
-          <button onClick={this.props.handleLike}>like</button>
-          {addedBy}
+          <p><a href={blog.url}>{blog.url}</a></p>
+          <p>{blog.likes} like{blog.likes !== 1 ? 's' : ''}</p>
+          <p><button onClick={this.props.handleLike}>like</button></p>
+          <p>{addedBy}</p>
         </div>
       </div>
     )

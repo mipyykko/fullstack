@@ -7,13 +7,17 @@ const setToken = (newToken) => {
   token = `bearer ${newToken}`
 }
 
+const getById = async (id) => {
+  const res = await axios.get(`${baseUrl}/${id}`)
+  return res.data
+}
+
 const getAll = () => {
-  const request = axios.get(baseUrl)
-  return request.then(response => response.data)
+  const req = axios.get(baseUrl)
+  return req.then(res => res.data)
 }
 
 const create = async (blogObject) => {
-  console.log(blogObject)
   const config = {
     headers: { 'Authorization': token }
   }
@@ -21,4 +25,15 @@ const create = async (blogObject) => {
   return res.data
 }
 
-export default { getAll, setToken, create }
+const like = async (id) => {
+  var likedBlog = await getById(id)
+
+  if (likedBlog === null) return null
+
+  likedBlog.likes++
+
+  const res = await axios.put(`${baseUrl}/${id}`, likedBlog)
+  return res.data
+}
+
+export default { getById, getAll, setToken, create, like }

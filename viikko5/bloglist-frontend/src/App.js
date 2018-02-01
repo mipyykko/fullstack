@@ -86,11 +86,12 @@ class App extends React.Component {
         notification: `blog ${newBlog.title} created`,
         title: '', author: '', url: ''
       })
+      this.createBlogForm.toggleVisibility()
       setTimeout(() => {
         this.setState({ notification: null })
       }, 2000)
     } catch (exception) {
-      this.setState({ error: 'missing fields ' })
+      this.setState({ error: 'missing fields' })
       setTimeout(() => {
         this.setState({ error: null })
       }, 2000)
@@ -101,8 +102,29 @@ class App extends React.Component {
     this.setState({ [event.target.name]: event.target.value })
   }
 
-  handleLike = (temp) => {
-    console.log(temp)
+  handleLike = async (id) => {
+    try {
+      const likedBlog = await blogService.like(id)
+
+      if (likedBlog === null) {
+        throw new Error('wrong id')
+      }
+
+      const likedIdx = this.state.blogs.findIndex(blog => id === blog.id)
+      this.setState({
+        blogs: this.state.blogs.slice(0, likedIdx)
+          .concat([{ ...this.state.blogs[likedIdx],
+            likes: likedBlog.likes }])
+          .concat(this.state.blogs.slice(likedIdx + 1))
+      })
+    } catch (exception) {
+      this.setState({ error: 'wrong id?' })
+      setTimeout(() => {
+        this.setState({ error: null })
+      }, 2000)
+
+      console.log(exception)
+    }
   }
 
   toggleExpanded = (ref) => {
@@ -137,7 +159,9 @@ class App extends React.Component {
           </Togglable> :
           <div>
             {loggedIn()}
-            <Togglable buttonLabel="new blog">
+            <Togglable
+              buttonLabel="new blog"
+              ref={component => this.createBlogForm = component}>
               <CreateBlogForm
                 handleCreateBlog={this.createBlog}
                 handleCreateBlogFormChange={this.handleCreateBlogFormChange}
