@@ -24,6 +24,7 @@ class App extends React.Component {
     )
 
     const loggedUserJSON = window.localStorage.getItem('loggedInUser')
+
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       this.setState({ user })
@@ -181,7 +182,7 @@ class App extends React.Component {
               password={this.state.password}
             />
           </Togglable> :
-          <div>
+          <div className="blogContent">
             {loggedIn()}
             <Togglable
               buttonLabel="new blog"
@@ -198,6 +199,7 @@ class App extends React.Component {
               blogs={sortedBlogs}
               handleLike={this.handleLike}
               handleDelete={this.handleDelete}
+              user={this.state.user}
             />
           </div>
         }
