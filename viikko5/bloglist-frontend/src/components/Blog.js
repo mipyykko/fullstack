@@ -6,14 +6,12 @@ export default class Blog extends React.Component {
     this.state = { visible: false }
   }
 
-  toggleVisibility = (event) => {
-    event.preventDefault()
+  toggleVisibility = () => {
     this.setState({ visible: !this.state.visible })
   }
 
   render() {
-    const blog = this.props.blog
-    const deletable = this.props.deletable
+    const { blog, deletable }  = this.props
 
     let addedBy = blog.user
       ? blog.user.name
@@ -29,11 +27,11 @@ export default class Blog extends React.Component {
     }
 
     return(
-      <div>
-        <div style={blogStyle} onClick={this.toggleVisibility}>
+      <div className="wrapper">
+        <div className="title" style={blogStyle} onClick={this.toggleVisibility}>
           {blog.title} {blog.author}
         </div>
-        <div style={{ display: this.state.visible ? '' : 'none' }}>
+        <div className="details" style={{ display: this.state.visible ? '' : 'none' }}>
           <p><a href={blog.url}>{blog.url}</a></p>
           <p>{blog.likes} like{blog.likes !== 1 ? 's' : ''}</p>
           <p><button onClick={this.props.handleLike}>like</button></p>
