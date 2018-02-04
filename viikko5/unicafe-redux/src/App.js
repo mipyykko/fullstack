@@ -1,13 +1,20 @@
 import React from 'react';
+import { createStore } from 'redux'
 import './App.css';
 
+let store
+
 const Statistiikka = () => {
-  const palautteita = 0
+  const data = store.getState()
+
+  const palautteita = Object.keys(data).reduce((prev, key) => prev + data[key], 0)
+  const pos = data.good / palautteita * 100
+  const keskiarvo = (data.good - data.bad) / palautteita
 
   if (palautteita === 0) {
     return (
       <div>
-        <h2>stataistiikka</h2>
+        <h2>statistiikka</h2>
         <div>ei yhtään palautetta annettu</div>
       </div>
     )
@@ -20,35 +27,40 @@ const Statistiikka = () => {
         <tbody>
           <tr>
             <td>hyvä</td>
-            <td></td>
+            <td>{data.good}</td>
           </tr>
           <tr>
             <td>neutraali</td>
-            <td></td>
+            <td>{data.ok}</td>
           </tr>
           <tr>
             <td>huono</td>
-            <td></td>
+            <td>{data.bad}</td>
           </tr>
           <tr>
             <td>keskiarvo</td>
-            <td></td>
+            <td>{keskiarvo.toFixed(2)}</td>
           </tr>
           <tr>
             <td>positiivisia</td>
-            <td></td>
+            <td>{pos.toFixed(2)}%</td>
           </tr>
         </tbody>
       </table>
 
-      <button>nollaa tilasto</button>
+      <button onClick={e => store.dispatch({ type: 'ZERO' })}>nollaa tilasto</button>
     </div >
   )
 }
 
 class App extends React.Component {
-  klik = (nappi) => () => {
+  constructor(props) {
+    super(props)
+    store = props.store
+  }
 
+  klik = (nappi) => () => {
+    store.dispatch({ type: nappi })
   }
 
   render() {
