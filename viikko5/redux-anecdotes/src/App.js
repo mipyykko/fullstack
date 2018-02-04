@@ -49,12 +49,14 @@ class App extends React.Component {
         )}
         <h2>create new</h2>
         <form onSubmit={this.handleAnecdoteCreate}>
-          <div><input 
-            type="text"
-            name="anecdote"
-            value={this.state.anecdote}
-            onChange={this.handleAnecdoteFormChange}
-          /></div>
+          <div>
+            <input 
+              type="text"
+              name="anecdote"
+              value={this.state.anecdote}
+              onChange={this.handleAnecdoteFormChange}
+            />
+          </div>
           <button type="submit">create</button> 
         </form>
       </div>
