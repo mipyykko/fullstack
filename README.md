@@ -7,4 +7,5 @@ Tehtävien palautusrepo.
 [Viikko 2](https://github.com/mipyykko/fullstack/tree/master/viikko2)  
 [Viikko 3](https://github.com/mipyykko/fullstack/tree/master/viikko3)  
 [Viikko 4](https://github.com/mipyykko/fullstack/tree/master/viikko4)  
+[Viikko 5](https://github.com/mipyykko/fullstack/tree/master/viikko5)  
 
