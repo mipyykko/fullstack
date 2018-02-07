@@ -11,7 +11,9 @@ class AnecdoteList extends React.Component {
   }
 
   render() {
+    const { filter } = this.props.store.getState()
     const anecdotes = this.props.store.getState().anecdotes
+      .filter(a => a.content.indexOf(filter) > -1)
     return (
       <div>
         <h2>Anecdotes</h2>
