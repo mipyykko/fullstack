@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { updateAnecdote } from '../reducers/anecdoteReducer'
-import { showNotification, resetNotification } from '../reducers/notificationReducer'
+import { showNotification } from '../reducers/notificationReducer'
 import anecdoteService from '../service/anecdotes'
 
 class AnecdoteList extends React.Component {
@@ -11,8 +11,7 @@ class AnecdoteList extends React.Component {
 
     this.forceUpdate()
 
-    this.props.showNotification(`you voted for '${anecdote.content}'`)
-    setTimeout(() => this.props.resetNotification(), 5000)
+    this.props.showNotification(`you voted for '${anecdote.content}'`, 5000)
   }
 
   render() {
@@ -51,8 +50,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = {
   updateAnecdote,
-  showNotification,
-  resetNotification
+  showNotification
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(AnecdoteList)
