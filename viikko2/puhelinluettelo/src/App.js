@@ -20,6 +20,7 @@ class App extends React.Component {
     numberService
         .getAll()
         .then(response => {
+            console.log(response.data)
             this.setState({ persons: response.data })
         })
   }
@@ -53,7 +54,7 @@ class App extends React.Component {
                 }
                 numberService.update(foundPerson.id, personObject)
                     .then(response => {
-                        const persons = this.state.persons.filter(n=> n.id !== foundPerson.id)
+                        const persons = this.state.persons.filter(n => n.id !== foundPerson.id)
                         this.setState({
                             persons: [...persons, response.data],
                             newName: '',
