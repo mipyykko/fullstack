@@ -1,10 +1,29 @@
 import React from 'react'
-import { BrowserRouter as Router, Route, NavLink, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Route, NavLink } from 'react-router-dom'
 import { 
   ListGroup, ListGroupItem, Alert, Grid, Row, Col, Image, 
   FormGroup, FormControl, ControlLabel, Button,
   Nav, Navbar, NavItem
 } from 'react-bootstrap'
+
+class RouteNavItem extends React.Component {
+  render() {
+    return(
+      <Route
+        path={this.props.href}
+        exact
+        children={({ match, history }) =>
+          <NavItem
+            onClick={e => history.push(e.currentTarget.getAttribute("href"))}
+            {...this.props}
+            active={match ? true : false}
+          >
+            {this.props.children}
+          </NavItem>}
+      />
+    )
+  }
+}
 
 const Anecdote = ({ anecdote }) => (
   <div>
@@ -50,16 +69,6 @@ const About = () => (
 )
 
 const Notification = ({ notification }) => {
-  const notificationStyle = {
-    color: 'green',
-    fontStyle: 'italic',
-    fontSize: '16',
-    padding: '5px',
-    borderRadius: '10px',
-    border: '2px solid green',
-    display: notification ? '' : 'none'
-  }
-
   return notification ? (
     <Alert color="success">
       {notification}
@@ -188,19 +197,6 @@ class App extends React.Component {
   }
   
   render() {
-    const menuStyle = {
-      background: 'lightBlue',
-      padding: '10px'
-    }
-
-    const activeLinkStyle = {
-      background: 'grey',
-      padding: '5px'
-    }
-    const linkStyle = {
-
-    }
-
     return (
       <div className='container'>
         <Router>
@@ -215,15 +211,9 @@ class App extends React.Component {
 
               <Navbar.Collapse>
                 <Nav>
-                  <NavItem href="#">
-                    <NavLink to="/">anecdotes</NavLink>
-                  </NavItem>
-                  <NavItem href="#">
-                    <NavLink to="/create">create new</NavLink>
-                  </NavItem>
-                  <NavItem href="#">
-                    <NavLink to="/about">about</NavLink>
-                  </NavItem>
+                  <RouteNavItem href="/">anecdotes</RouteNavItem>
+                  <RouteNavItem href="/create">create new</RouteNavItem>
+                  <RouteNavItem href="/about">about</RouteNavItem>
                 </Nav>
               </Navbar.Collapse>
 
