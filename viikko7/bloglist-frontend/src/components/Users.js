@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import PropTypes from 'prop-types'
 import { initUsers } from '../reducers/userReducer'
+/* eslint-disable */
 import { Link } from 'react-router-dom'
 
 class Users extends React.Component {

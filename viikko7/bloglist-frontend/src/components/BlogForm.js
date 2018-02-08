@@ -1,7 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import Blog from './Blog'
 import { likeBlog, deleteBlog } from '../reducers/blogReducer'
+import { Table } from 'semantic-ui-react'
+import { Link } from 'react-router-dom'
 
 class BlogForm extends React.Component {
 
@@ -12,18 +13,17 @@ class BlogForm extends React.Component {
     return(
       <div>
         <h2>Blogs</h2>
-        {blogs ? blogs.map(blog =>
-          <Blog
-            key={blog.id}
-            blog={blog}
-            handleLike={() => this.props.likeBlog(blog.id)}
-            handleDelete={() => this.props.deleteBlog(blog.id)}
-            deletable={
-              blog.user === undefined ||
-              (blog && user && blog.user.username === user.username)
-            }
-          />
-        ) : null}
+        <Table striped celled>
+          <Table.Body>
+            {blogs.map(blog =>
+              <Table.Row key={blog.id}>
+                <Table.Cell>
+                  <Link to={`/blogs/${blog.id}`}>{blog.title} by {blog.author}</Link>
+                </Table.Cell>
+              </Table.Row>
+            )}
+          </Table.Body>
+        </Table>
       </div>
     )
   }
@@ -31,7 +31,7 @@ class BlogForm extends React.Component {
 
 const mapStateToProps = (state) => {
   return({
-    blogs: state.blogs,
+    blogs: state.blogs.sort((a, b) => b.likes - a.likes),
     user: state.user
   })
 }

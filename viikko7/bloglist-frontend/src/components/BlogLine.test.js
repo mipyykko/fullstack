@@ -1,8 +1,8 @@
 import React from 'react'
 import { shallow } from 'enzyme'
-import Blog from './Blog'
+import BlogLine from './BlogLine'
 
-describe.only('<Blog />', () => {
+describe.only('<BlogLine />', () => {
   let blogComponent, blog
 
   beforeEach(() => {
@@ -15,7 +15,7 @@ describe.only('<Blog />', () => {
     }
 
     blogComponent = shallow(
-      <Blog
+      <BlogLine
         blog={blog}
         deletable={true}
       />

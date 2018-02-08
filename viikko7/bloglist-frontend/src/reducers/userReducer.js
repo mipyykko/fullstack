@@ -4,8 +4,9 @@ const reducer = (state = [], action) => {
   switch (action.type) {
   case 'INIT_USERS':
     return action.users
+  default:
+    return state
   }
-  return state
 }
 
 export const initUsers = () => {

@@ -9,12 +9,15 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import Users from './components/Users'
 import User from './components/User'
+import Blog from './components/Blog'
 
 import blogService from './services/blogs'
 import loginService from './services/login'
 
 import { initBlogs } from './reducers/blogReducer'
-import { initUsers } from './reducers/userReducer'
+import { initUsers } from './reducers/userReducer'
+import { setUser, logout } from './reducers/loginReducer'
+import { notify } from './reducers/notificationReducer'
 
 class App extends React.Component {
   constructor(props) {
@@ -29,20 +32,11 @@ class App extends React.Component {
     this.props.initBlogs()
     this.props.initUsers()
 
-    console.log(this.props)
-
-    blogService.getAll().then(blogs =>
-    {
-      this.setState({ blogs })
-    }
-    )
-
     const loggedUserJSON = window.localStorage.getItem('loggedInUser')
 
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      this.setState({ user })
-      blogService.setToken(user.token)
+      this.props.setUser(user)
     }
   }
 
@@ -58,8 +52,9 @@ class App extends React.Component {
       blogService.setToken(user.token)
       this.setState({
         notification: `${user.name} logged in`,
-        username: '', password: '', user
+        username: '', password: ''
       })
+      this.props.setUser(user)
       setTimeout(() => {
         this.setState({ notification: null })
       }, 2000)
@@ -72,14 +67,9 @@ class App extends React.Component {
   }
 
   logout = () => {
-    window.localStorage.removeItem('loggedInUser')
-    this.setState({
-      notification: `${this.state.user.name} logged out`,
-      user: null
-    })
-    setTimeout(() => {
-      this.setState({ notification: null })
-    }, 2000)
+    const user = this.props.login
+    this.props.logout()
+    this.props.notify(`${user.name} logged out`, 2000)
   }
 
   handleLoginFormChange = (event) => {
@@ -111,10 +101,6 @@ class App extends React.Component {
         this.setState({ error: null })
       }, 2000)
     }
-  }
-
-  handleCreateBlogFormChange = (event) => {
-    this.setState({ [event.target.name]: event.target.value })
   }
 
   handleLike = async (id) => {
@@ -174,42 +160,26 @@ class App extends React.Component {
   render() {
     const loggedIn = () => (
       <div>
-        {this.state.user.name} logged in <button onClick={this.logout}>Logout</button>
+        {this.props.login.name} logged in <button onClick={this.logout}>Logout</button>
       </div>
     )
-
-    const sortedBlogs = this.state.blogs.sort((a, b) => b.likes - a.likes)
 
     return (
       <div>
         <Router>
           <div>
             <h2>blogs</h2>
-            <Notification
-              notification={this.state.notification}
-              error={this.state.error}
-            />
-            {this.state.user === null ?
+            <Notification />
+            {!this.props.login.token ?
               <Togglable buttonLabel="log in">
-                <LoginForm
-                  handleLogin={this.login}
-                  handleLoginFormChange={this.handleLoginFormChange}
-                  username={this.state.username}
-                  password={this.state.password}
-                />
+                <LoginForm />
               </Togglable> :
               <div>
                 {loggedIn()}
                 <Togglable
                   buttonLabel="new blog"
                   ref={component => this.createBlogForm = component}>
-                  <CreateBlogForm
-                    handleCreateBlog={this.createBlog}
-                    handleCreateBlogFormChange={this.handleCreateBlogFormChange}
-                    title={this.state.title}
-                    author={this.state.author}
-                    url={this.state.url}
-                  />
+                  <CreateBlogForm />
                 </Togglable>
                 <Route exact path="/" render={() => {
                   return(
@@ -223,6 +193,9 @@ class App extends React.Component {
                 <Route exact path="/users/:id" render={({ match }) =>
                   <User id={match.params.id} />
                 }/>
+                <Route exact path="/blogs/:id" render={({ match }) =>
+                  <Blog id={match.params.id} />
+                }/>
               </div>
             }
           </div>
@@ -235,13 +208,17 @@ class App extends React.Component {
 const mapStateToProps = (state) => {
   return ({
     blogs: state.blogs,
-    users: state.users
+    users: state.users,
+    login: state.login
   })
 }
 
 const mapDispatchToProps = {
   initBlogs,
-  initUsers
+  initUsers,
+  setUser,
+  logout,
+  notify
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)

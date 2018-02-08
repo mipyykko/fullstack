@@ -1,33 +1,48 @@
 import React from 'react'
+import { connect } from 'react-redux'
+import { login } from '../reducers/loginReducer'
+import { Form, Button } from 'semantic-ui-react'
 
-const LoginForm = ({
-  handleLogin, handleLoginFormChange, username, password
-}) => (
-  <div>
+class LoginForm extends React.Component {
+  handleLogin = (event) => {
+    event.preventDefault()
+    this.props.login(event.target.username.value, event.target.password.value)
+  }
 
-    <h2>Log in</h2>
-    <form onSubmit={handleLogin}>
+  render() {
+    return (
       <div>
-          username
-        <input
-          type="text"
-          name="username"
-          value={username}
-          onChange={handleLoginFormChange}
-        />
-      </div>
-      <div>
-          password
-        <input
-          type="password"
-          name="password"
-          value={password}
-          onChange={handleLoginFormChange}
-        />
-      </div>
-      <button type="submit">login</button>
-    </form>
-  </div>
-)
 
-export default LoginForm
+        <h2>Log in</h2>
+        <Form onSubmit={this.handleLogin}>
+          <Form.Field>
+            <label>username</label>
+            <input
+              type="text"
+              name="username"
+            />
+          </Form.Field>
+          <Form.Field>
+            <label>password</label>
+            <input
+              type="password"
+              name="password"
+            />
+          </Form.Field>
+          <Button type="submit">login</Button>
+        </Form>
+      </div>
+    )
+  }
+}
+const mapStateToProps = (state) => {
+  return ({
+    login: state.login
+  })
+}
+
+const mapDispatchToProps = {
+  login
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginForm)
