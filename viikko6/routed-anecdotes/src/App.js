@@ -1,5 +1,10 @@
 import React from 'react'
-import { BrowserRouter as Router, Route, NavLink } from 'react-router-dom'
+import { BrowserRouter as Router, Route, NavLink, Link } from 'react-router-dom'
+import { 
+  ListGroup, ListGroupItem, Alert, Grid, Row, Col, Image, 
+  FormGroup, FormControl, ControlLabel, Button,
+  Nav, Navbar, NavItem
+} from 'react-bootstrap'
 
 const Anecdote = ({ anecdote }) => (
   <div>
@@ -13,28 +18,35 @@ const Anecdote = ({ anecdote }) => (
 const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
-    <ul>
+    <ListGroup>
       {anecdotes.map(anecdote => 
-        <li key={anecdote.id}>
-          <a href={`/anecdotes/${anecdote.id}`}>{anecdote.content}</a>
-        </li>
+        <ListGroupItem key={anecdote.id}>
+          <NavLink to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</NavLink>
+        </ListGroupItem>
       )}
-    </ul>  
+    </ListGroup>  
   </div>
 )
 
 const About = () => (
-  <div>
-    <h2>About anecdote app</h2>
-    <p>According to Wikipedia:</p>
-    
-    <em>An anecdote is a brief, revealing account of an individual person or an incident. 
-      Occasionally humorous, anecdotes differ from jokes because their primary purpose is not simply to provoke laughter but to reveal a truth more general than the brief tale itself, 
-      such as to characterize a person by delineating a specific quirk or trait, to communicate an abstract idea about a person, place, or thing through the concrete details of a short narrative. 
-      An anecdote is "a story with a point."</em>
+  <Grid>
+    <Row className="show-grid">
+      <Col xs={6} md={6}>
+        <h2>About anecdote app</h2>
+        <p>According to Wikipedia:</p>
+        
+        <em>An anecdote is a brief, revealing account of an individual person or an incident. 
+          Occasionally humorous, anecdotes differ from jokes because their primary purpose is not simply to provoke laughter but to reveal a truth more general than the brief tale itself, 
+          such as to characterize a person by delineating a specific quirk or trait, to communicate an abstract idea about a person, place, or thing through the concrete details of a short narrative. 
+          An anecdote is "a story with a point."</em>
 
-    <p>Software engineering is full of excellent anecdotes, at this app you can find the best and add more.</p>
-  </div>
+        <p>Software engineering is full of excellent anecdotes, at this app you can find the best and add more.</p>
+      </Col>
+      <Col xs={4} md={4}>
+        <Image src="https://pbs.twimg.com/profile_images/1152859879/kuva_400x400.jpg" responsive circle />
+      </Col>
+    </Row>
+  </Grid>
 )
 
 const Notification = ({ notification }) => {
@@ -48,11 +60,11 @@ const Notification = ({ notification }) => {
     display: notification ? '' : 'none'
   }
 
-  return (
-    <div style={notificationStyle}>
+  return notification ? (
+    <Alert color="success">
       {notification}
-    </div>
-  )
+    </Alert>
+  ) : null
 }
 
 const Footer = () => (
@@ -94,19 +106,30 @@ class CreateNew extends React.Component {
       <div>
         <h2>create a new anecdote</h2>
         <form onSubmit={this.handleSubmit}>
-          <div>
-            content 
-            <input name='content' value={this.state.content} onChange={this.handleChange} />
-          </div>
-          <div>
-            author
-            <input name='author' value={this.state.author} onChange={this.handleChange} />
-          </div>
-          <div>
-            url for more info
-            <input name='info' value={this.state.info} onChange={this.handleChange} />
-          </div> 
-          <button>create</button>
+          <FormGroup>
+            <ControlLabel>content</ControlLabel> 
+            <FormControl 
+              type='text'
+              name='content' 
+              value={this.state.content} 
+              onChange={this.handleChange} 
+            />
+            <ControlLabel>author</ControlLabel>
+            <FormControl
+              type='text' 
+              name='author' 
+              value={this.state.author} 
+              onChange={this.handleChange} 
+            />
+            <ControlLabel>url for more info</ControlLabel>
+            <FormControl
+              type='text' 
+              name='info' 
+              value={this.state.info} 
+              onChange={this.handleChange} 
+            />
+            <Button bsStyle='success' type='submit'>create</Button>
+          </FormGroup>
         </form>
       </div>  
     )
@@ -179,28 +202,52 @@ class App extends React.Component {
     }
 
     return (
-      <div>
-        <h1>Software anecdotes</h1>
+      <div className='container'>
+        <Router>
           <div>
-            <Router>
-              <div>
-                <div style={menuStyle}>
-                  <NavLink activeStyle={activeLinkStyle} exact to="/">anecdotes</NavLink>&nbsp;
-                  <NavLink activeStyle={activeLinkStyle} to="/create">create new</NavLink>&nbsp;
-                  <NavLink activeStyle={activeLinkStyle} to="/about">about</NavLink>&nbsp;
-                </div>
-                <Notification notification={this.state.notification} />
-                <Route exact path="/" render={() => <AnecdoteList anecdotes={this.state.anecdotes} />} />
-                <Route exact path="/anecdotes/:id" render={({match}) => <Anecdote anecdote={this.anecdoteById(match.params.id)} />} />
-                <Route path="/create" render={({history}) => <CreateNew history={history} addNew={this.addNew} />} />
-                <Route path="/about" render={() => <About />} />
-              </div>
-            </Router>
+            <Navbar inverse collapseOnSelect>
+              <Navbar.Header> 
+                <Navbar.Brand>
+                  Software anecdotes
+                </Navbar.Brand>
+                <Navbar.Toggle />
+              </Navbar.Header>
+
+              <Navbar.Collapse>
+                <Nav>
+                  <NavItem href="#">
+                    <NavLink to="/">anecdotes</NavLink>
+                  </NavItem>
+                  <NavItem href="#">
+                    <NavLink to="/create">create new</NavLink>
+                  </NavItem>
+                  <NavItem href="#">
+                    <NavLink to="/about">about</NavLink>
+                  </NavItem>
+                </Nav>
+              </Navbar.Collapse>
+
+            </Navbar>
+
+            <Route exact path="/" render={() => 
+              <AnecdoteList anecdotes={this.state.anecdotes} />} 
+            />
+            <Route exact path="/anecdotes/:id" render={({match}) => 
+              <Anecdote anecdote={this.anecdoteById(match.params.id)} />} 
+            />
+            <Route path="/create" render={({history}) => 
+              <CreateNew history={history} addNew={this.addNew} />} 
+            />
+            <Route path="/about" render={() => <About />} />
+
+            <Notification notification={this.state.notification} />
           </div>
-          <Footer />
+        </Router>
+        <Footer />
       </div>
     );
   }
 }
+
 
 export default App;
