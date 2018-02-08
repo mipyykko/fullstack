@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Route, NavLink } from 'react-router-dom'
 
 const Anecdote = ({ anecdote }) => (
   <div>
@@ -38,8 +38,18 @@ const About = () => (
 )
 
 const Notification = ({ notification }) => {
+  const notificationStyle = {
+    color: 'green',
+    fontStyle: 'italic',
+    fontSize: '16',
+    padding: '5px',
+    borderRadius: '10px',
+    border: '2px solid green',
+    display: notification ? '' : 'none'
+  }
+
   return (
-    <div>
+    <div style={notificationStyle}>
       {notification}
     </div>
   )
@@ -153,18 +163,31 @@ class App extends React.Component {
 
     this.setState({ anecdotes })
   }
-
+  
   render() {
+    const menuStyle = {
+      background: 'lightBlue',
+      padding: '10px'
+    }
+
+    const activeLinkStyle = {
+      background: 'grey',
+      padding: '5px'
+    }
+    const linkStyle = {
+
+    }
+
     return (
       <div>
         <h1>Software anecdotes</h1>
           <div>
             <Router>
               <div>
-                <div>
-                  <Link to="/">anecdotes</Link>&nbsp;
-                  <Link to="/create">create new</Link>&nbsp;
-                  <Link to="/about">about</Link>&nbsp;
+                <div style={menuStyle}>
+                  <NavLink activeStyle={activeLinkStyle} exact to="/">anecdotes</NavLink>&nbsp;
+                  <NavLink activeStyle={activeLinkStyle} to="/create">create new</NavLink>&nbsp;
+                  <NavLink activeStyle={activeLinkStyle} to="/about">about</NavLink>&nbsp;
                 </div>
                 <Notification notification={this.state.notification} />
                 <Route exact path="/" render={() => <AnecdoteList anecdotes={this.state.anecdotes} />} />
