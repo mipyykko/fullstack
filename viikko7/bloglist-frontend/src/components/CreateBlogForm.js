@@ -3,19 +3,27 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Form, Button } from 'semantic-ui-react'
 import { createBlog } from '../reducers/blogReducer'
+import { notify } from '../reducers/notificationReducer'
 
 class CreateBlogForm extends React.Component {
 
   handleCreateBlog = (event) => {
     event.preventDefault()
-    this.props.createBlog(
-      event.target.title.value,
-      event.target.author.value,
-      event.target.url.value
-    )
+    const blog = {
+      title: event.target.title.value,
+      author: event.target.author.value,
+      url: event.target.url.value
+    }
+
+    if (!blog.title || !blog.author) return
+
+    this.props.createBlog(blog)
+
     event.target.title.value = ''
     event.target.author.value = ''
     event.target.url.value = ''
+
+    this.props.notify(`Blog '${blog.title}' added!`)
   }
 
   render() {
@@ -51,4 +59,9 @@ class CreateBlogForm extends React.Component {
   }
 }
 
-export default connect(null, { createBlog })(CreateBlogForm)
+const mapDispatchToProps = {
+  createBlog,
+  notify
+}
+
+export default connect(null, mapDispatchToProps)(CreateBlogForm)

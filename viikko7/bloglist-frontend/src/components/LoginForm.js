@@ -1,12 +1,16 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { login } from '../reducers/loginReducer'
 import { Form, Button } from 'semantic-ui-react'
+import { login } from '../reducers/loginReducer'
+import { notify } from '../reducers/notificationReducer'
 
 class LoginForm extends React.Component {
   handleLogin = (event) => {
     event.preventDefault()
-    this.props.login(event.target.username.value, event.target.password.value)
+    const username = event.target.username.value
+    const password = event.target.password.value
+    this.props.login(username, password)
+    this.props.notify(`${username} logged in`)
   }
 
   render() {
@@ -42,7 +46,8 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = {
-  login
+  login,
+  notify
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(LoginForm)

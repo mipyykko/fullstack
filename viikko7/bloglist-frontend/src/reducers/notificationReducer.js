@@ -9,7 +9,7 @@ const reducer = (state = null, action) => {
   }
 }
 
-export const notify = (notification, timeout) => {
+export const notify = (notification, timeout = 5000) => {
   return async (dispatch) => {
     dispatch({
       type: 'SET_NOTIFICATION',

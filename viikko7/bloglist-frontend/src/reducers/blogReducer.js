@@ -18,7 +18,12 @@ const reducer = (state = [], action) => {
   case 'CREATE_BLOG' : {
     return [...state, action.newBlog ]
   }
+  case 'ADD_COMMENT' : {
+    const { commentedBlog } = action
+    const old = state.filter(blog => commentedBlog.id !== blog.id)
 
+    return [...old, commentedBlog ]
+  }
   default:
     return state
   }
@@ -68,4 +73,16 @@ export const createBlog = (title, author, url) => {
     })
   }
 }
+
+export const addComment = (id, comment) => {
+  return async (dispatch) => {
+    const commentedBlog = await blogService.comment(id, comment)
+
+    dispatch({
+      type: 'ADD_COMMENT',
+      commentedBlog
+    })
+  }
+}
+
 export default reducer

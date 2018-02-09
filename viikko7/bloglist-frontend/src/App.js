@@ -2,6 +2,8 @@ import React from 'react'
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 
+import { Menu, Button } from 'semantic-ui-react'
+
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import CreateBlogForm from './components/CreateBlogForm'
@@ -160,7 +162,7 @@ class App extends React.Component {
   render() {
     const loggedIn = () => (
       <div>
-        {this.props.login.name} logged in <button onClick={this.logout}>Logout</button>
+        <em>{this.props.login.name}</em> logged in <Button onClick={this.logout}>Logout</Button>
       </div>
     )
 
@@ -169,13 +171,24 @@ class App extends React.Component {
         <Router>
           <div>
             <h2>blogs</h2>
+            <Menu inverted>
+              <Menu.Item link>
+                <Link to="/">blogs</Link>
+              </Menu.Item>
+              <Menu.Item link>
+                <Link to="/users">users</Link>
+              </Menu.Item>
+              <Menu.Item link>
+                {this.props.login.name &&
+                  loggedIn()}
+              </Menu.Item>
+            </Menu>
             <Notification />
             {!this.props.login.token ?
               <Togglable buttonLabel="log in">
                 <LoginForm />
               </Togglable> :
               <div>
-                {loggedIn()}
                 <Togglable
                   buttonLabel="new blog"
                   ref={component => this.createBlogForm = component}>

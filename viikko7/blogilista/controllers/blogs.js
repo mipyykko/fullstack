@@ -112,4 +112,36 @@ blogsRouter.put('/:id', async (req, res) => {
   }
 })
 
+blogsRouter.post('/:id/comments', async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id)
+
+    if (blog === undefined) {
+      res.status(400).json({ error: 'invalid id' })
+    }
+    if (req.body.comment === undefined) {
+      res.status(400).json({ error: 'content missing' })
+    }
+
+    console.log(req.body)
+    console.log(blog)
+
+    const newComments = blog.comments ?
+      blog.comments.concat(req.body.comment) :
+      [ req.body.comment ]
+
+    console.log(newComments)
+    let commentAddedBlog = { ...blog._doc, comments: newComments }
+
+    console.log(commentAddedBlog)
+
+    let editedBlog = await Blog.findByIdAndUpdate(req.params.id, commentAddedBlog, { new: true })
+
+    res.status(200).json(Blog.format(editedBlog))
+  } catch (exception) {
+    console.log(exception)
+    res.status(400).send({ error: 'something happened?' })
+  }
+})
+
 module.exports = blogsRouter
