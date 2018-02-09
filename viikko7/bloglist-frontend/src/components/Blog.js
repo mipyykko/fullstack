@@ -1,9 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Redirect } from 'react-router-dom'
-import { Button, Icon, Label, Form, Loader } from 'semantic-ui-react'
-import { likeBlog, deleteBlog, addComment } from '../reducers/blogReducer'
-import { notify } from '../reducers/notificationReducer'
+import { Redirect } from 'react-router-dom'
+import { Button, Icon, Label, Form, Loader } from 'semantic-ui-react'
+import { likeBlog, deleteBlog, addComment } from '../reducers/blogReducer'
+import PropTypes from 'prop-types'
 
 class Blog extends React.Component {
 
@@ -19,15 +19,13 @@ class Blog extends React.Component {
     return this.props.blogs ? this.props.blogs.find(blog => blog.id === id) : {}
   }
 
-  handleLike = (id) => {
-    this.props.likeBlog(id)
-    this.props.notify(`'${this.blog.title}' liked!`)
+  handleLike = () => {
+    this.props.likeBlog(this.blog.id)
   }
 
   handleDelete = (blog) => {
     if (window.confirm(`Really delete '${blog.title}' by ${blog.author}?`)) {
       this.props.deleteBlog(blog.id)
-      this.props.notify(`Blog '${blog.title}' deleted`)
       this.setState({ deleted: true })
     }
   }
@@ -37,7 +35,6 @@ class Blog extends React.Component {
     const comment = event.target.comment.value
     if (!comment) return
     this.props.addComment(this.props.id, comment)
-    this.props.notify(`Comment '${comment}' added to '${this.blog.title}'`)
     event.target.comment.value = ''
   }
 
@@ -98,8 +95,17 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = {
   likeBlog,
   deleteBlog,
-  addComment,
-  notify
+  addComment
+}
+
+Blog.propTypes = {
+  likeBlog: PropTypes.func.isRequired,
+  deleteBlog: PropTypes.func.isRequired,
+  addComment: PropTypes.func.isRequired,
+  notify: PropTypes.func.isRequired,
+  login: PropTypes.object.isRequired,
+  blogs: PropTypes.array.isRequired,
+  id: PropTypes.string.isRequired
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Blog)

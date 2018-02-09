@@ -1,11 +1,17 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { Form, Button } from 'semantic-ui-react'
-import { createBlog } from '../reducers/blogReducer'
-import { notify } from '../reducers/notificationReducer'
+import { Form, Button } from 'semantic-ui-react'
+import { createBlog } from '../reducers/blogReducer'
+import Togglable from './Togglable'
 
 class CreateBlogForm extends React.Component {
+
+  constructor() {
+    super()
+    this.state = { redirect: null }
+  }
 
   handleCreateBlog = (event) => {
     event.preventDefault()
@@ -23,45 +29,62 @@ class CreateBlogForm extends React.Component {
     event.target.author.value = ''
     event.target.url.value = ''
 
-    this.props.notify(`Blog '${blog.title}' added!`)
+    this.createBlogForm.toggleVisibility()
+    this.setState({ redirect: '/' })
   }
 
   render() {
+    if (this.state.redirect) {
+      return (
+        <Redirect to={this.state.redirect} />
+      )
+    }
+
     return(
-      <div>
-        <h2>Create new blog</h2>
-        <Form onSubmit={this.handleCreateBlog}>
-          <Form.Field>
-            <label>title</label>
-            <input
-              type="text"
-              name="title"
-            />
-          </Form.Field>
-          <Form.Field>
-            <label>author</label>
-            <input
-              type="text"
-              name="author"
-            />
-          </Form.Field>
-          <Form.Field>
-            <label>url</label>
-            <input
-              type="text"
-              name="url"
-            />
-          </Form.Field>
-          <Button type="submit">Create</Button>
-        </Form>
-      </div>
+      <Togglable
+        buttonLabel="new blog"
+        ref={component => this.createBlogForm = component}>
+        <div>
+          <h2>Create new blog</h2>
+          <Form onSubmit={this.handleCreateBlog}>
+            <Form.Field>
+              <Form.Input
+                label="title"
+                placeholder="title"
+                type="text"
+                name="title"
+              />
+            </Form.Field>
+            <Form.Field>
+              <Form.Input
+                label="author"
+                placeholder="author"
+                type="text"
+                name="author"
+              />
+            </Form.Field>
+            <Form.Field>
+              <Form.Input
+                label="url"
+                placeholder="url"
+                type="text"
+                name="url"
+              />
+            </Form.Field>
+            <Button type="submit">Create</Button>
+          </Form>
+        </div>
+      </Togglable>
     )
   }
 }
 
 const mapDispatchToProps = {
-  createBlog,
-  notify
+  createBlog
+}
+
+CreateBlogForm.propTypes = {
+  createBlog: PropTypes.func.isRequired
 }
 
 export default connect(null, mapDispatchToProps)(CreateBlogForm)

@@ -1,4 +1,5 @@
 import blogService from '../services/blogs'
+import { showNotification, showError } from './notificationReducer'
 
 const reducer = (state = [], action) => {
   console.log(action)
@@ -31,57 +32,105 @@ const reducer = (state = [], action) => {
 
 export const initBlogs = () => {
   return async (dispatch) => {
-    const blogs = await blogService.getAll()
-    dispatch({
-      type: 'INIT_BLOGS',
-      blogs
-    })
+    try {
+      const blogs = await blogService.getAll()
+      dispatch({
+        type: 'INIT_BLOGS',
+        blogs
+      })
+    } catch (exception) {
+      const { error } = exception.response.data
+      dispatch({
+        type: 'ERROR_INIT_BLOGS',
+        error
+      })
+      dispatch(showError(`Error initializing blogs: ${error}`))
+    }
   }
 }
 
 export const likeBlog = (id) => {
   return async (dispatch) => {
-    const blog = await blogService.like(id)
-    dispatch({
-      type: 'LIKE_BLOG',
-      blog
-    })
+    try {
+      const blog = await blogService.like(id)
+      dispatch({
+        type: 'LIKE_BLOG',
+        blog
+      })
+      dispatch(showNotification(`Blog '${blog.title}' liked`))
+    } catch (exception) {
+      const { error } = exception.response.data
+      dispatch({
+        type: 'ERROR_LIKE_BLOG',
+        error
+      })
+      dispatch(showError(`Error liking blog: ${error}`))
+    }
   }
 }
 
 export const deleteBlog = (id) => {
   return async (dispatch) => {
-    const deletedBlog = await blogService.deleteBlog(id)
-    dispatch({
-      type: 'DELETE_BLOG',
-      deletedBlog
-    })
+    try {
+      const deletedBlog = await blogService.deleteBlog(id)
+      dispatch({
+        type: 'DELETE_BLOG',
+        deletedBlog
+      })
+      dispatch(showNotification(`Blog ${deletedBlog.title} deleted`))
+    } catch (exception) {
+      const { error } = exception.response.data
+      dispatch({
+        type: 'DELETE_BLOG_ERROR',
+        error
+      })
+      dispatch(showError(`Error deleting blog: ${error}`))
+    }
   }
 }
 
-export const createBlog = (title, author, url) => {
+export const createBlog = (blog) => {
   return async (dispatch) => {
-    const newBlog = await blogService.create({
-      title: title,
-      author: author,
-      url: url
-    })
+    try {
+      const newBlog = await blogService.create(blog)
 
-    dispatch({
-      type: 'CREATE_BLOG',
-      newBlog
-    })
+      if (!newBlog) {
+        throw Error('blog creation failed')
+      }
+      dispatch({
+        type: 'CREATE_BLOG',
+        newBlog
+      })
+      dispatch(showNotification(`Blog '${newBlog.title}' created!`))
+    } catch (exception) {
+      const { error } = exception.response.data
+      dispatch({
+        type: 'ERROR_CREATE_BLOG',
+        error
+      })
+      dispatch(showError(`Error creating blog: ${error}`))
+    }
   }
 }
 
 export const addComment = (id, comment) => {
   return async (dispatch) => {
-    const commentedBlog = await blogService.comment(id, comment)
+    try {
+      const commentedBlog = await blogService.comment(id, comment)
 
-    dispatch({
-      type: 'ADD_COMMENT',
-      commentedBlog
-    })
+      dispatch({
+        type: 'ADD_COMMENT',
+        commentedBlog
+      })
+      dispatch(showNotification(`Comment '${comment}' added`))
+    } catch (exception) {
+      const { error } = exception.response.data
+      dispatch({
+        type: 'ERROR_ADD_COMMENT',
+        error
+      })
+      dispatch(showError(`Error adding comment: ${error}`))
+    }
   }
 }
 

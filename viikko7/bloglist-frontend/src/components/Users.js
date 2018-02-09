@@ -1,31 +1,30 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { initUsers } from '../reducers/userReducer'
-/* eslint-disable */
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom' // eslint-disable-line
+import { Table } from 'semantic-ui-react' // eslint-disable-line
+import PropTypes from 'prop-types'
 
 class Users extends React.Component {
-  componentWillMount() {
-    this.props.initUsers()
-  }
 
   render() {
     return (
       <div>
         <h2>Users</h2>
-        <table>
-          <thead>
-            <td>&nbsp;</td>
-            <td><b>blogs added</b></td>
-          </thead>
-          <tbody>
+        <Table striped celled>
+          <Table.Header>
+            <Table.Row>
+              <Table.Cell>&nbsp;</Table.Cell>
+              <Table.Cell><b>blogs added</b></Table.Cell>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
             {this.props.users.map(user =>
-              <tr key={user.id}>
-                <td><Link to={`/users/${user.id}`}>{user.name}</Link></td>
-                <td>{user.blogs.length}</td>
-              </tr>)}
-          </tbody>
-        </table>
+              <Table.Row key={user.id}>
+                <Table.Cell><Link to={`/users/${user.id}`}>{user.name}</Link></Table.Cell>
+                <Table.Cell>{user.blogs.length}</Table.Cell>
+              </Table.Row>)}
+          </Table.Body>
+        </Table>
       </div>
     )
   }
@@ -37,8 +36,8 @@ const mapStateToProps = (state) => {
   })
 }
 
-const mapDispatchToProps = {
-  initUsers
+Users.propTypes = {
+  users: PropTypes.array.isRequired,
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Users)
+export default connect(mapStateToProps)(Users)

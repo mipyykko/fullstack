@@ -1,5 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
+import { List } from 'semantic-ui-react'
 
 class User extends React.Component {
 
@@ -13,9 +15,12 @@ class User extends React.Component {
         {user.blogs &&
           <div>
             <h3>Added blogs</h3>
-            <ul>
-              {user.blogs.map(blog => <li key={blog._id}>{blog.title}</li>)}
-            </ul>
+            <List animated>
+              {user.blogs.map(blog =>
+                <List.Item key={blog._id}>
+                  <Link to={`/blogs/${blog._id}`}>{blog.title} by {blog.author}</Link>
+                </List.Item>)}
+            </List>
           </div>
         }
       </div>

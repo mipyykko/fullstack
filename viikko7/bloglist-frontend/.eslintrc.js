@@ -4,7 +4,7 @@ module.exports = {
         "node": true
     },
     "parser": "babel-eslint", 
-    "extends": "eslint:recommended",
+    "extends": ["eslint:recommended", "plugin:react/recommended"],
     "rules": {
         "indent": [
             "error",

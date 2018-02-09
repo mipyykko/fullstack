@@ -2,12 +2,12 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { likeBlog, deleteBlog } from '../reducers/blogReducer'
 import { Table } from 'semantic-ui-react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import PropTypes from 'prop-types'
 
 class BlogForm extends React.Component {
 
   render() {
-    const user = this.props.user
     const blogs = this.props.blogs
 
     return(
@@ -31,14 +31,19 @@ class BlogForm extends React.Component {
 
 const mapStateToProps = (state) => {
   return({
-    blogs: state.blogs.sort((a, b) => b.likes - a.likes),
-    user: state.user
+    blogs: state.blogs.sort((a, b) => b.likes - a.likes)
   })
 }
 
 const mapDispatchToProps = {
   likeBlog,
   deleteBlog
+}
+
+BlogForm.propTypes = {
+  likeBlog: PropTypes.func.isRequired,
+  deleteBlog: PropTypes.func.isRequired,
+  blogs: PropTypes.array.isRequired
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(BlogForm)
