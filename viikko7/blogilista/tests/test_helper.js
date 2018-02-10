@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
@@ -70,6 +71,15 @@ const usersInDb = async () => {
   return users.map(User.format)
 }
 
+const validToken = (user) => {
+  return jwt.sign(user, process.env.SECRET)
+}
+
+const createHeader = (token) => {
+  return {
+    'Authorization': `bearer ${token}`
+  }
+}
 module.exports = {
-  blogsInDb, initialBlogs, nonExistentId, usersInDb
+  blogsInDb, initialBlogs, nonExistentId, usersInDb, validToken, createHeader
 }

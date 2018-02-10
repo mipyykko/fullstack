@@ -191,7 +191,7 @@ describe('list_helper tests', () => {
     test('when the list has only one author, it should return the author and combined likes', () => {
       const result = listHelper.mostLikes(listWithSameLikesAndAuthor)
       expect(result)
-        .toEqual({ author: 'Robert C. Martin', likes: 4 })
+        .toEqual({ author: 'Robert C. Martin', likes: 4 })
     })
 
     test('when list has several authors, it should return the author with most likes', () => {

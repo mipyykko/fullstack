@@ -4,7 +4,7 @@ const api = supertest(app)
 const User = require('../models/user')
 const helper = require('./test_helper')
 
-describe.only('only one user in db', async () => {
+describe('only one user in db', async () => {
   let rootUser
 
   beforeAll(async() => {

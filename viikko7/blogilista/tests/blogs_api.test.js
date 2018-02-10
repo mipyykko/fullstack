@@ -2,9 +2,13 @@ const supertest = require('supertest')
 const { app, server } = require('../index')
 const api = supertest(app)
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const helper = require('./test_helper')
 
 // tests borked with login
+let header
+let dummyUser
+let validToken
 
 beforeAll(async () => {
   await Blog.remove({})
@@ -12,9 +16,25 @@ beforeAll(async () => {
   const blogObjects = helper.initialBlogs.map(blog => new Blog(blog))
   const promiseArray = blogObjects.map(blog => blog.save())
   await Promise.all(promiseArray)
+
+  await User.remove({})
+
+  const dummyUserObject = {
+    username: 'dummy',
+    name: 'dummy',
+    password: 'password'
+  }
+
+  dummyUser = new User(dummyUserObject)
+  dummyUser = await dummyUser.save()
+  dummyUserObject.id = dummyUser._id
+
+  validToken = await helper.validToken(dummyUserObject)
+  header = await helper.createHeader(validToken)
+
 })
 
-describe.skip('HTTP GET tests', async () => {
+describe('HTTP GET tests', async () => {
   test('all blogs are returned as json', async () => {
     const blogs = await helper.blogsInDb()
 
@@ -56,8 +76,12 @@ describe.skip('HTTP GET tests', async () => {
   })
 }, {})
 
-describe.skip('HTTP POST tests', async () => {
-  test('a valid blog can be added', async () => {
+describe('HTTP POST tests', async () => {
+
+  beforeAll(async () => {
+  })
+
+  test('a valid blog can be added with valid token', async () => {
     try {
       const before = await helper.blogsInDb()
 
@@ -71,6 +95,7 @@ describe.skip('HTTP POST tests', async () => {
       await api
         .post('/api/blogs')
         .send(newBlog)
+        .set(header)
         .expect(201)
         .expect('Content-Type', /application\/json/)
 
@@ -84,12 +109,20 @@ describe.skip('HTTP POST tests', async () => {
     }
   })
 
-  test('empty blog is not added', async () => {
+  test('fails without a valid token', async () => {
+    await api
+      .post('/api/blogs')
+      .send({}) // fails nevertheless before testing if empty
+      .expect(401)
+  })
+
+  test('empty blog is not added with valid token', async () => {
     const before = await helper.blogsInDb()
 
     await api
       .post('/api/blogs')
       .send({})
+      .set(header)
       .expect(400)
 
     const after = await helper.blogsInDb()
@@ -97,7 +130,7 @@ describe.skip('HTTP POST tests', async () => {
     expect(before.length).toBe(after.length)
   })
 
-  test('blogs with missing key(s) are not added', async () => {
+  test('blogs with missing key(s) are not added with ok token', async () => {
 
     const before = await helper.blogsInDb()
 
@@ -116,6 +149,7 @@ describe.skip('HTTP POST tests', async () => {
     let promiseArray = await strippedBlogObjects.map(async (blog) => {
       await api
         .post('/api/blogs')
+        .set(header)
         .send(blog)
         .expect(400)
     })
@@ -136,6 +170,7 @@ describe.skip('HTTP POST tests', async () => {
 
     const savedBlog = await api
       .post('/api/blogs')
+      .set(header)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -144,23 +179,41 @@ describe.skip('HTTP POST tests', async () => {
   })
 }, {})
 
-describe.skip('HTTP DELETE tests', async () => {
-  let addedBlog
+describe('HTTP DELETE tests', async () => {
+  let addedBlog, addedBlog2, addedAnonymousBlog
 
   beforeAll(async () => {
     addedBlog = new Blog({
       title: 'test to be deleted',
       author: 'testAuthor',
-      url: 'http:/url.url'
+      url: 'http:/url.url',
+      user: dummyUser
     })
-    await addedBlog.save()
+
+    addedBlog2 = new Blog({
+      title: 'test to be deleted 2',
+      author: 'testAuthor',
+      url: 'http:/url.url',
+      user: dummyUser
+    })
+
+    addedAnonymousBlog = new Blog({
+      title: 'anonymous to be deleted',
+      author: 'asdv',
+      url: 'http:/urly.url'
+    })
+
+    const blogObjects = [ addedBlog, addedBlog2, addedAnonymousBlog ]
+    const promiseArray = blogObjects.map(blog => blog.save())
+    await Promise.all(promiseArray)
   })
 
-  test('delete with id succeeds', async () => {
+  test('delete with id succeeds with valid token', async () => {
     const before = await helper.blogsInDb()
 
     await api
       .delete(`/api/blogs/${addedBlog.id}`)
+      .set(header)
       .expect(204)
 
     const after = await helper.blogsInDb()
@@ -168,6 +221,36 @@ describe.skip('HTTP DELETE tests', async () => {
     const titles = after.map(blog => blog.title)
 
     expect(titles).not.toContain(addedBlog.title)
+    expect(after.length).toBe(before.length - 1)
+  })
+
+  test('delete with id fails without token', async () => {
+    const before = await helper.blogsInDb()
+
+    await api
+      .delete(`/api/blogs/${addedBlog2.id}`)
+      .expect(401)
+
+    const after = await helper.blogsInDb()
+
+    const titles = after.map(blog => blog.title)
+
+    expect(titles).toContain(addedBlog2.title)
+    expect(after.length).toBe(before.length)
+  })
+
+  test('delete succeeds with anonymous without token', async () => {
+    const before = await helper.blogsInDb()
+
+    await api
+      .delete(`/api/blogs/${addedAnonymousBlog.id}`)
+      .expect(204)
+
+    const after = await helper.blogsInDb()
+
+    const titles = after.map(blog => blog.title)
+
+    expect(titles).not.toContain(addedAnonymousBlog.title)
     expect(after.length).toBe(before.length - 1)
   })
 
@@ -187,7 +270,7 @@ describe.skip('HTTP DELETE tests', async () => {
   })
 }, {})
 
-describe.skip('HTTP PUT tests', async () => {
+describe('HTTP PUT tests', async () => {
   let addedBlog
 
   beforeAll(async () => {
