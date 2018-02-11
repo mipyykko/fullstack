@@ -15,6 +15,25 @@ const blogs = [
   }
 ]
 
+const create = (blog) => {
+  return Promise.resolve(blog)
+}
+
+const remove = (blog) => {
+  return Promise.resolve(blog)
+}
+
+const like = (id) => {
+  const blog = getById(id)
+  return { ...blog, likes: blog.likes + 1 }
+}
+
+const getById = (id) => {
+  const blog = blogs.find(blog => id === blog.id)
+  return blog
+}
+
+
 const getAll = () => {
   return Promise.resolve(blogs)
 }
@@ -23,4 +42,4 @@ const setToken = (newToken) => {
   token = newToken
 }
 
-export default { getAll, setToken, blogs }
+export default { getAll, setToken, blogs, create, remove, like }

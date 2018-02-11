@@ -25,7 +25,7 @@ class Blog extends React.Component {
 
   handleDelete = (blog) => {
     if (window.confirm(`Really delete '${blog.title}' by ${blog.author}?`)) {
-      this.props.deleteBlog(blog.id)
+      this.props.deleteBlog(blog)
       this.setState({ deleted: true })
     }
   }

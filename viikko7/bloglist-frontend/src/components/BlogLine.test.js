@@ -2,7 +2,7 @@ import React from 'react'
 import { shallow } from 'enzyme'
 import BlogLine from './BlogLine'
 
-describe.only('<BlogLine />', () => {
+describe.skip('<BlogLine />', () => {
   let blogComponent, blog
 
   beforeEach(() => {
