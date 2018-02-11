@@ -43,7 +43,7 @@ export const showNotification = (notification, timeout = 5000, error = false) =>
 }
 
 export const showError = (notification, timeout = 5000) => {
-  showNotification(notification, timeout, true)
+  return showNotification(notification, timeout, true)
 }
 
 export default reducer

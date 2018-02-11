@@ -47,7 +47,7 @@ class App extends React.Component {
       <div>
         <Router>
           <div>
-            <h2>blogs</h2>
+            <h2>Blog application</h2>
             <Menu inverted>
               <Menu.Item link>
                 <Link to="/">blogs</Link>

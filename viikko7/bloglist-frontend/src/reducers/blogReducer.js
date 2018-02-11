@@ -39,7 +39,8 @@ export const initBlogs = () => {
         blogs
       })
     } catch (exception) {
-      const { error } = exception.response.data
+      const error = exception.response.data.error || 'unknown error'
+      console.log(error)
       dispatch({
         type: 'ERROR_INIT_BLOGS',
         error
@@ -59,7 +60,7 @@ export const likeBlog = (id) => {
       })
       dispatch(showNotification(`Blog '${blog.title}' liked`))
     } catch (exception) {
-      const { error } = exception.response.data
+      const error = exception.response.data || 'unknown error'
       dispatch({
         type: 'ERROR_LIKE_BLOG',
         error

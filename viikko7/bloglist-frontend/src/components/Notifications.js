@@ -11,8 +11,6 @@ class Notifications extends React.Component {
   }
 
   render() {
-    console.log(this.props)
-
     return (
       <div>
         {this.props.notifications.slice(0, 3).map(n =>

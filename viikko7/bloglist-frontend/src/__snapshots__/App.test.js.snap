@@ -1,0 +1,385 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<App /> user is logged in renders correctly 1`] = `
+<div>
+  <div>
+    <h2>
+      Blog application
+    </h2>
+    <div
+      className="ui inverted menu"
+    >
+      <div
+        className="link item"
+        onClick={[Function]}
+      >
+        <a
+          href="/"
+          onClick={[Function]}
+        >
+          blogs
+        </a>
+      </div>
+      <div
+        className="link item"
+        onClick={[Function]}
+      >
+        <a
+          href="/users"
+          onClick={[Function]}
+        >
+          users
+        </a>
+      </div>
+      <div
+        className="link item"
+        onClick={[Function]}
+      >
+        <div>
+          <em>
+            hdfg
+          </em>
+           logged in 
+          <button
+            className="ui button"
+            disabled={undefined}
+            onClick={[Function]}
+            role="button"
+            tabIndex={undefined}
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+    <div />
+    <div>
+      <div>
+        <div
+          style={
+            Object {
+              "display": "",
+            }
+          }
+        >
+          <button
+            className="ui button"
+            disabled={undefined}
+            onClick={[Function]}
+            role="button"
+            tabIndex={undefined}
+          >
+            new blog
+          </button>
+        </div>
+        <div
+          style={
+            Object {
+              "display": "none",
+            }
+          }
+        >
+          <div>
+            <h2>
+              Create new blog
+            </h2>
+            <form
+              action={undefined}
+              className="ui form"
+              onSubmit={[Function]}
+            >
+              <div
+                className="field"
+              >
+                <div
+                  className="field"
+                >
+                  <label
+                    htmlFor={undefined}
+                  >
+                    title
+                  </label>
+                  <div
+                    className="ui input"
+                    content={undefined}
+                  >
+                    <input
+                      disabled={undefined}
+                      name="title"
+                      onChange={[Function]}
+                      placeholder="title"
+                      required={undefined}
+                      tabIndex={undefined}
+                      type="text"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div
+                className="field"
+              >
+                <div
+                  className="field"
+                >
+                  <label
+                    htmlFor={undefined}
+                  >
+                    author
+                  </label>
+                  <div
+                    className="ui input"
+                    content={undefined}
+                  >
+                    <input
+                      disabled={undefined}
+                      name="author"
+                      onChange={[Function]}
+                      placeholder="author"
+                      required={undefined}
+                      tabIndex={undefined}
+                      type="text"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div
+                className="field"
+              >
+                <div
+                  className="field"
+                >
+                  <label
+                    htmlFor={undefined}
+                  >
+                    url
+                  </label>
+                  <div
+                    className="ui input"
+                    content={undefined}
+                  >
+                    <input
+                      disabled={undefined}
+                      name="url"
+                      onChange={[Function]}
+                      placeholder="url"
+                      required={undefined}
+                      tabIndex={undefined}
+                      type="text"
+                    />
+                  </div>
+                </div>
+              </div>
+              <button
+                className="ui button"
+                disabled={undefined}
+                onClick={[Function]}
+                role="button"
+                tabIndex={undefined}
+                type="submit"
+              >
+                Create
+              </button>
+            </form>
+          </div>
+          <button
+            className="ui button"
+            disabled={undefined}
+            onClick={[Function]}
+            role="button"
+            tabIndex={undefined}
+          >
+            cancel
+          </button>
+        </div>
+      </div>
+      <div
+        className="blogContent"
+      >
+        <div>
+          <h2>
+            Blogs
+          </h2>
+          <table
+            className="ui celled striped table"
+          >
+            <tbody
+              className=""
+            >
+              <tr
+                className=""
+              >
+                <td
+                  className=""
+                >
+                  <a
+                    href="/blogs/abcdef56"
+                    onClick={[Function]}
+                  >
+                    asdf fdfdf
+                     by 
+                    hhhhh6
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`<App /> user is not logged in renders correctly 1`] = `
+<div>
+  <div>
+    <h2>
+      Blog application
+    </h2>
+    <div
+      className="ui inverted menu"
+    >
+      <div
+        className="link item"
+        onClick={[Function]}
+      >
+        <a
+          href="/"
+          onClick={[Function]}
+        >
+          blogs
+        </a>
+      </div>
+      <div
+        className="link item"
+        onClick={[Function]}
+      >
+        <a
+          href="/users"
+          onClick={[Function]}
+        >
+          users
+        </a>
+      </div>
+      <div
+        className="link item"
+        onClick={[Function]}
+      >
+        
+      </div>
+    </div>
+    <div />
+    <div>
+      <div
+        style={
+          Object {
+            "display": "",
+          }
+        }
+      >
+        <button
+          className="ui button"
+          disabled={undefined}
+          onClick={[Function]}
+          role="button"
+          tabIndex={undefined}
+        >
+          log in
+        </button>
+      </div>
+      <div
+        style={
+          Object {
+            "display": "none",
+          }
+        }
+      >
+        <div>
+          <h2>
+            Log in
+          </h2>
+          <form
+            action={undefined}
+            className="ui form"
+            onSubmit={[Function]}
+          >
+            <div
+              className="field"
+            >
+              <div
+                className="field"
+              >
+                <label
+                  htmlFor={undefined}
+                >
+                  username
+                </label>
+                <div
+                  className="ui input"
+                  content={undefined}
+                >
+                  <input
+                    disabled={undefined}
+                    name="username"
+                    onChange={[Function]}
+                    placeholder="username"
+                    required={undefined}
+                    tabIndex={undefined}
+                    type="text"
+                  />
+                </div>
+              </div>
+            </div>
+            <div
+              className="field"
+            >
+              <div
+                className="field"
+              >
+                <label
+                  htmlFor={undefined}
+                >
+                  password
+                </label>
+                <div
+                  className="ui input"
+                  content={undefined}
+                >
+                  <input
+                    disabled={undefined}
+                    name="password"
+                    onChange={[Function]}
+                    placeholder="password"
+                    required={undefined}
+                    tabIndex={undefined}
+                    type="password"
+                  />
+                </div>
+              </div>
+            </div>
+            <button
+              className="ui button"
+              disabled={undefined}
+              onClick={[Function]}
+              role="button"
+              tabIndex={undefined}
+              type="submit"
+            >
+              login
+            </button>
+          </form>
+        </div>
+        <button
+          className="ui button"
+          disabled={undefined}
+          onClick={[Function]}
+          role="button"
+          tabIndex={undefined}
+        >
+          cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
