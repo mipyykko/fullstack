@@ -79,10 +79,10 @@ export const deleteBlog = (blog) => {
         type: 'DELETE_BLOG',
         deletedBlog
       })
-      dispatch(refreshUser(deletedBlog.user._id))
+      dispatch(refreshUser(deletedBlog.user))
       dispatch(showNotification(`Blog ${deletedBlog.title} deleted`))
     } catch (exception) {
-      const { error } = exception.response.data
+      const error = exception.response.data || 'unknown error'
       dispatch({
         type: 'DELETE_BLOG_ERROR',
         error
@@ -107,7 +107,7 @@ export const createBlog = (blog) => {
       dispatch(refreshUser(newBlog.user))
       dispatch(showNotification(`Blog '${newBlog.title}' created!`))
     } catch (exception) {
-      const { error } = exception.response.data
+      const error = exception.response.data || 'unknown error'
       dispatch({
         type: 'ERROR_CREATE_BLOG',
         error

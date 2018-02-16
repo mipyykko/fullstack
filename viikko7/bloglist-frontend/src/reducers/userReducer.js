@@ -34,8 +34,9 @@ export const initUsers = () => {
 export const refreshUser = (id) => {
   return async (dispatch) => {
     try {
-      console.log(id)
       const user = await userService.getById(id)
+      if (!user)
+        throw new Error('no id')
       dispatch({
         type: 'REFRESH_USER',
         user
