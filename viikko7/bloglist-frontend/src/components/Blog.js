@@ -102,7 +102,6 @@ Blog.propTypes = {
   likeBlog: PropTypes.func.isRequired,
   deleteBlog: PropTypes.func.isRequired,
   addComment: PropTypes.func.isRequired,
-  notify: PropTypes.func.isRequired,
   login: PropTypes.object.isRequired,
   blogs: PropTypes.array.isRequired,
   id: PropTypes.string.isRequired
