@@ -13,6 +13,12 @@ usersRouter.get('/', async (req, res) => {
   res.json(users.map(User.format))
 })
 
+usersRouter.get('/:id', async (req, res) => {
+  const user = await User
+    .findById(req.params.id)
+  res.json(User.format(user))
+})
+
 usersRouter.post('/', async (req, res) => {
   try {
     const body = req.body

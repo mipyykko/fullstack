@@ -10,7 +10,7 @@ class CreateBlogForm extends React.Component {
 
   constructor() {
     super()
-    this.state = { redirect: null }
+    this.redirect = null
   }
 
   handleCreateBlog = (event) => {
@@ -30,13 +30,14 @@ class CreateBlogForm extends React.Component {
     event.target.url.value = ''
 
     this.createBlogForm.toggleVisibility()
-    this.setState({ redirect: '/' })
+    this.redirect = '/'
   }
 
   render() {
-    if (this.state.redirect) {
+    if (this.redirect) {
+      this.redirect = null
       return (
-        <Redirect to={this.state.redirect} />
+        <Redirect to={this.redirect} />
       )
     }
 

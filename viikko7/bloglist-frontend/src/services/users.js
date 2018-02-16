@@ -6,4 +6,9 @@ const getAll = () => {
   return req.then(res => res.data)
 }
 
-export default { getAll }
+const getById = (id) => {
+  const req = axios.get(`${baseUrl}/${id}`)
+  return req.then(res => res.data)
+}
+
+export default { getAll, getById }
